@@ -1,5 +1,9 @@
 import os
 from pathlib import Path
+from datetime import timedelta
+# Ovoa e za hostirana db
+# import dj_database_url
+
 # TODO na docker rabote i bez ovoa dotenv (linux valjda?)
 import dotenv
 
@@ -66,6 +70,10 @@ TEMPLATES = [
 WSGI_APPLICATION = "project.wsgi.application"
 
 
+# DATABASES = {}
+# db_from_env = dj_database_url.config(conn_max_age=600)
+# DATABASES['default'].update(db_from_env)
+
 DATABASES = {
     "default": {
         "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
@@ -92,7 +100,6 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
-# TODO pw validators moze da se stae
 AUTH_PASSWORD_VALIDATORS = [
     # {
     #     "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -142,3 +149,9 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Authentication
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+}

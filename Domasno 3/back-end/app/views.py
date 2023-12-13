@@ -46,7 +46,6 @@ def upsert_view(request) -> HttpResponse:
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-# TODO namesto 404 da vrakja samo prazna lista, ne samo tuka tuku i u drugio View
 class CitiesView(APIView):
     def get_city_by_id(self, city_id: int, data: dict[str, Any]) -> Response:
         '''
