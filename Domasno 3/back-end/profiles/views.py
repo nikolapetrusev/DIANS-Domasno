@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from app.models import Winery, Review
 from app.serializers import ReviewSerializer, WinerySerializer
-from profiles.serializers import UserSerializer
+from profiles.serializers import ProfileUserSerializer
 
 
 class FavoritesView(APIView):
@@ -48,12 +48,11 @@ class FavoritesView(APIView):
         # w_id = request.POST["winery_id"]
         w_id = json.loads(request.body.decode("utf-8"))["winery_id"]
         # TODO ako ne postoe vinarija so taj iD?
-        user.favorites.add(Winery.objects.get(pk=w_id))
+        user.extended.favorites.add(Winery.objects.get(pk=w_id))
 
         return Response(status=status.HTTP_202_ACCEPTED)
 
 
-# TODO dodaj PUT metod za edit na review?
 class ReviewsView(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -74,10 +73,11 @@ class ReviewsView(APIView):
             user=user,
             rating=data["rating"],
             comment=comm if (comm := data.get("comment", None)) else None,
+            winery_id=data["winery_id"]
         )
-        winery = Winery.objects.get(pk=data["winery_id"])
-        winery.reviews.add(review)
-
+        # winery = Winery.objects.get(pk=data["winery_id"])
+        # winery.reviews.add(review)
+        review.save()
         return Response(status=status.HTTP_201_CREATED)
     
     def put(self, request, format=None) -> Response:
@@ -91,6 +91,12 @@ class ReviewsView(APIView):
             return Response(serializer.data)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, format=None) -> Response:
+        review = Review.objects.get(pk=request.data["review_id"])
+        review.delete()
+        return Response(status=status.HTTP_200_OK)
+
 
 
 class ProfileView(APIView):
@@ -100,30 +106,35 @@ class ProfileView(APIView):
         data: dict[str, Any] = {}
         
         user = User.objects.get(username=request.user)
-        data["user"] = UserSerializer(user).data
+        # data["user"] = UserSerializer(user).data
+        data["user"] = ProfileUserSerializer(user).data
 
         return Response(data, status=status.HTTP_200_OK)
 
     # TODO treba PUT ne POST
-    # komplicinrano ke e so put zaradi required fields itn..
     def post(self, request, format=None) -> Response:
             user = User.objects.get(username=request.user)
 
-            if tmp := request.POST.get("first_name", None):
+            # if tmp := request.POST.get("old_password", None):
+            #     if user.check_password(tmp):
+            #         print("aaaaa")
+            #     else:
+            #         print("bbbbb")
+
+            if tmp := json.loads(request.body.decode("utf-8")).get("first_name", None):
                 user.first_name = tmp
+            if tmp := json.loads(request.body.decode("utf-8")).get("last_name", None):
+                user.last_name = tmp
+            if tmp := json.loads(request.body.decode("utf-8")).get("email", None):
+                user.email = tmp
+            if tmp := json.loads(request.body.decode("utf-8")).get("username", None):
+                user.username = tmp
             
-            # if tmp := json.loads(request.body.decode("utf-8")).get("first_name", None):
-            #     user.first_name = tmp
-            # if tmp := json.loads(request.body.decode("utf-8")).get("first_name", None):
-            #     user.last_name = tmp
-            # if tmp := json.loads(request.body.decode("utf-8")).get("email", None):
-            #     user.email = tmp
-            # if tmp := json.loads(request.body.decode("utf-8")).get("username", None):
-            #     if User.objects.filter(username=tmp).exists():
-            #         return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
-            #     user.last_name = tmp
-            # if tmp := json.loads(request.body.decode("utf-8")).get("password", None):
-            #     user.set_password(tmp)
+            if old_pw := json.loads(request.body.decode("utf-8")).get("old_password", None):
+                if user.check_password(old_pw):
+                    new_pw = json.loads(request.body.decode("utf-8")).get("new_password", None)
+                    user.set_password(new_pw)
+                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
 
             user.save()
             

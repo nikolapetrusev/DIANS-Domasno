@@ -27,12 +27,6 @@ class Coords(models.Model):
         db_table = "coords"
 
 
-class Review(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    rating = models.DecimalField(max_digits=2, decimal_places=1)
-    comment = models.TextField()
-
-
 class Winery(models.Model):
     name = models.TextField()
     city = models.ForeignKey(City, on_delete=models.SET_NULL, blank=True, null=True)
@@ -40,7 +34,7 @@ class Winery(models.Model):
     phone = models.TextField()
     work = models.TextField(blank=True, null=True)
     coords = models.ForeignKey(Coords, on_delete=models.SET_NULL, blank=True, null=True)
-    reviews = models.ManyToManyField(Review)
+    # reviews = models.ManyToManyField(Review)
 
     @property
     def rating(self):
@@ -54,3 +48,10 @@ class Winery(models.Model):
         verbose_name = "Винарија"
         verbose_name_plural = "Винарии"
         db_table = "winery"
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="reviews")
+    rating = models.DecimalField(max_digits=2, decimal_places=1)
+    comment = models.TextField()
+    winery = models.ForeignKey(Winery, related_name="reviews", on_delete=models.CASCADE)    
