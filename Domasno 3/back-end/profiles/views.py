@@ -9,8 +9,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from app.models import Winery, Review
-from app.serializers import ReviewSerializer, WinerySerializer
 from profiles.serializers import ProfileUserSerializer
+from profiles.services import UserService, ReviewService, FavoritesService
+from profiles.exceptions import InvalidInputError, PasswordsDontMatchError
 
 
 class FavoritesView(APIView):
@@ -22,15 +23,12 @@ class FavoritesView(APIView):
         Parameters:
             N/A
         Returns:
-            wineries: list[Winery]
+            data: dict[str, Any]
         """
-        data: dict[str, Any] = {}
-
         user = User.objects.get(username=request.user)
 
-        favorites = fav if (fav := user.extended.favorites) else []
-        favorites_serialized = WinerySerializer(favorites, many=True)
-        data["favorites"] = favorites_serialized.data
+        data: dict[str, Any] = {}
+        data["favorites"] = FavoritesService.get_favorite(user)
 
         return Response(data, status=status.HTTP_200_OK)
 
@@ -46,9 +44,9 @@ class FavoritesView(APIView):
         user = User.objects.get(username=request.user)
 
         # w_id = request.POST["winery_id"]
-        w_id = json.loads(request.body.decode("utf-8"))["winery_id"]
-        # TODO ako ne postoe vinarija so taj iD?
-        user.extended.favorites.add(Winery.objects.get(pk=w_id))
+        data = json.loads(request.body.decode("utf-8"))
+        
+        FavoritesService.add_favorite(user, data)
 
         return Response(status=status.HTTP_202_ACCEPTED)
 
@@ -65,44 +63,52 @@ class ReviewsView(APIView):
             comment: str | None
         """
         user = User.objects.get(username=request.user)
-
         data = json.loads(request.body.decode("utf-8"))
-        # data = request.POST
+
+        ReviewService.create_review(user, data)
         
-        review = Review.objects.create(
-            user=user,
-            rating=data["rating"],
-            comment=comm if (comm := data.get("comment", None)) else None,
-            winery_id=data["winery_id"]
-        )
-        # winery = Winery.objects.get(pk=data["winery_id"])
-        # winery.reviews.add(review)
-        review.save()
         return Response(status=status.HTTP_201_CREATED)
     
     def put(self, request, format=None) -> Response:
-        review = Review.objects.get(pk=request.data["review_id"])
+        """
+        Edit review
+        Parameters:
+            review_id: int
+            winery_id: int
+            rating: float
+            comment: str
+        """
         user = User.objects.get(username=request.user)
 
-        serializer = ReviewSerializer(review, data=request.data)
-
-        if serializer.is_valid() and review.user == user:
-            serializer.save(user=user)
-            return Response(serializer.data)
+        try:
+            ReviewService.edit_review(user, request.data)
+            return Response(status=status.HTTP_200_OK)
+        except InvalidInputError as err:
+            return Response(data={"data": str(err)}, status=status.HTTP_406_NOT_ACCEPTABLE)
         
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, format=None) -> Response:
-        review = Review.objects.get(pk=request.data["review_id"])
-        review.delete()
-        return Response(status=status.HTTP_200_OK)
-
+        """
+        Delete review
+        Parameters:
+            review_id: int
+        """
+        try:
+            ReviewService.delete_review(request.data)
+            return Response(status=status.HTTP_200_OK)
+        except Review.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class ProfileView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None) -> Response:
+        """
+        Get user details
+        Parameters:
+            N/A
+        """
         data: dict[str, Any] = {}
         
         user = User.objects.get(username=request.user)
@@ -111,32 +117,15 @@ class ProfileView(APIView):
 
         return Response(data, status=status.HTTP_200_OK)
 
-    # TODO treba PUT ne POST
+    # TODO docstring
     def post(self, request, format=None) -> Response:
             user = User.objects.get(username=request.user)
+            data = json.loads(request.body.decode("utf-8"))
 
-            # if tmp := request.POST.get("old_password", None):
-            #     if user.check_password(tmp):
-            #         print("aaaaa")
-            #     else:
-            #         print("bbbbb")
-
-            if tmp := json.loads(request.body.decode("utf-8")).get("first_name", None):
-                user.first_name = tmp
-            if tmp := json.loads(request.body.decode("utf-8")).get("last_name", None):
-                user.last_name = tmp
-            if tmp := json.loads(request.body.decode("utf-8")).get("email", None):
-                user.email = tmp
-            if tmp := json.loads(request.body.decode("utf-8")).get("username", None):
-                user.username = tmp
-            
-            if old_pw := json.loads(request.body.decode("utf-8")).get("old_password", None):
-                if user.check_password(old_pw):
-                    new_pw = json.loads(request.body.decode("utf-8")).get("new_password", None)
-                    user.set_password(new_pw)
-                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
-
-            user.save()
+            try:
+                UserService.update_user(user, data)
+            except PasswordsDontMatchError as err:
+                return Response(data={"data": str(err)}, status=status.HTTP_406_NOT_ACCEPTABLE)
             
             return Response(status=status.HTTP_200_OK)
 
