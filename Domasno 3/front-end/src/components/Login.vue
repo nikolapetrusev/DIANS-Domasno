@@ -35,6 +35,7 @@
 
 <script>
 import router from "@/router";
+import {mutations, store} from "@/store/store";
 
 export default {
   name: "LoginComponent",
@@ -51,16 +52,16 @@ export default {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ "username":this.username, "password":this.password})
       };
-      const response = await fetch("https://dians-backend.onrender.com/auth/login/", requestOptions);
+      const response = await fetch(store.api_url + "/auth/login/", requestOptions);
 
       if (response.status === 200) {
         const data = await response.json();
         sessionStorage.setItem("access", data.access);
         sessionStorage.setItem("refresh", data.refresh);
+        // sessionStorage.setItem("loggedIn", "true")
 
+        mutations.setLoggedIn(true)
         await router.push("/")
-      } else {
-        console.log('Error:', response.status);
       }
     },
   }
@@ -98,6 +99,11 @@ export default {
     background-color: white;
     color: var(--primary-color);
     border: 1px solid var(--primary-color);
+  }
+
+  .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(130, 0, 0, 0.5);
   }
 
   .pad {

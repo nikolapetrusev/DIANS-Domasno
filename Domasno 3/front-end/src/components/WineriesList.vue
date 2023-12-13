@@ -1,4 +1,4 @@
-<template>
+<template v-if="!loading">
   <div class="wineries col-md-6 p-2">
     <div class="d-flex justify-content-around">
       <div class="d-flex align-items-center textDiv">
@@ -6,7 +6,7 @@
         <h5 v-else-if="this.selectedCity">Винарии - {{ this.selectedCity }}</h5>
         <h5 v-else-if="this.selectedRating>0">Винарии (>{{ this.selectedRating }}☆)</h5>
         <h5 v-else>Винарии</h5>
-        <i class="heart fas fa-heart" @click="showFavorites"></i>
+        <i class="heart fas fa-heart" @click="showFavorites" :class="{'hide' : !userLoggedIn}"></i>
       </div>
     </div>
     <div class="scrollbar">
@@ -26,8 +26,7 @@ export default {
   name: "WineriesList",
   data() {
     return {
-      // wineries: "",
-      favorites: ""
+      favorites: "",
     }
   },
   props: {
@@ -43,8 +42,13 @@ export default {
     };
   },
   computed: {
+    userLoggedIn() {
+      console.log(sessionStorage.getItem("loggedIn"))
+      return sessionStorage.getItem("loggedIn") === "true"
+    },
     filteredWineries() {
       let filtered = null;
+
       if(!store.selectedCity && store.selectedRating === 0) { // site vinarii
         filtered = this.wineries;
       }
@@ -57,19 +61,22 @@ export default {
       else { // izbral rejting
         filtered = this.wineries.filter(winery => winery.rating >= store.selectedRating);
       }
-      if(store.favoriteClicked) {
-          filtered = filtered.filter(winery => this.favorites.includes(winery))
+
+      if (store.favoriteClicked) {
+        filtered = filtered.filter(winery => {
+          for (let favorite of this.favorites) {
+            if (winery.id === favorite.id) {
+              return true;
+            }
+          }
+          return false;
+        });
       }
 
       return filtered
-    }
+    },
   },
   methods: {
-    // async fetchData() {
-    //   const response = await fetch("https://dians-backend.onrender.com/wineries");
-    //   this.wineries = await response.json();
-    //   this.wineries = JSON.parse(JSON.stringify(this.wineries))["wineries"]
-    // },
     async showFavorites() {
       const heartIcon = document.querySelector('.heart');
       if (heartIcon) {
@@ -78,41 +85,18 @@ export default {
 
       mutations.toggleFavorite();
 
-      // const requestOptions = {
-      //   method: "POST",
-      //   headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")},
-      //   body: JSON.stringify({"winery_id":store.selectedWinery.id})
-      // };
       const requestOptions = {
         method: "GET",
         headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")}
       };
-      const response = await fetch("https://dians-backend.onrender.com/profiles/favorites/", requestOptions);
-      this.favorites = await response.json();
+      const response = await fetch(store.api_url + "/profiles/favorites/", requestOptions);
+      this.favorites = await response.json();4
 
-      console.log(this.favorites)
-
-      // TODO proveri kako se cuvat favorites
-      this.favorites = JSON.parse(JSON.stringify(this.favorites))
-
-      console.log(this.favorites)
-
-      // const response = await fetch("http://192.168.43.158:8000/profiles/favorites/", requestOptions);
-      //
-      // if (response.status === 200) {
-      //   // const data = await response.json();
-      //   // sessionStorage.setItem("access", data.access);
-      //   // sessionStorage.setItem("refresh", data.refresh);
-      //   // Vue.http.headers.common['Authorization'] = 'Bearer ' + data.token;
-      //   // router.push('/');
-      // } else {
-      //   console.log('Error:', response.status);
-      // }
+      this.favorites = JSON.parse(JSON.stringify(this.favorites))["favorites"]
     },
     getWineryPage(winery) {
       mutations.setSelectedWinery(winery);
-      console.log(store.selectedWinery)
-      // this.$emit("winery-selected", winery);
+      sessionStorage.setItem("selectedWinery", JSON.stringify(winery))
       router.push('/winery');
     },
   }
@@ -165,5 +149,9 @@ export default {
 
   .active {
     color: var(--primary-color)!important;
+  }
+
+  .hide{
+    visibility: hidden;
   }
 </style>

@@ -8,7 +8,6 @@
           <li class="nav-item" v-if="userLoggedIn"><a @click="logout">Одјава</a></li>
           <li class="nav-item" v-else><router-link to="/login">Најава</router-link></li>
           <li class="nav-item" v-if="userLoggedIn"><router-link to="/profile">Профил</router-link></li>
-<!--          <li class="nav-item"><router-link to="/profile">Профил</router-link></li>-->
         </ul>
       </div>
     </div>
@@ -17,24 +16,28 @@
 
 <script>
 import router from "@/router";
+import {mutations, store} from "@/store/store";
 
 export default {
   name: "AppHeader",
   computed: {
     userLoggedIn() {
-      return sessionStorage.getItem('access') !== null;
-    }
+      if(store.loggedIn) {
+        return store.loggedIn
+      }
+      else {
+        return sessionStorage.getItem("loggedIn") === "true"
+      }
+    },
   },
   methods: {
     logout() {
-      console.log("logout called")
       sessionStorage.removeItem('access');
       sessionStorage.removeItem('refresh');
+      sessionStorage.setItem('loggedIn', "false");
 
-      console.log(sessionStorage.getItem("access"))
-
-      // TODO kaj da se redirektira
-      router.push('/login');
+      mutations.setLoggedIn(false);
+      router.push("/")
     }
   }
 }

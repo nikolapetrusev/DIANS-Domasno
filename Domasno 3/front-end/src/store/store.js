@@ -5,6 +5,10 @@ export const store = reactive({
     selectedWinery: null,
     selectedRating: 0,
     favoriteClicked: false,
+    api_url: "http://127.0.0.1:8000/",
+    wineries: Array,
+    cities: "",
+    loggedIn: false,
 });
 
 export const mutations = {
@@ -19,5 +23,14 @@ export const mutations = {
     },
     toggleFavorite() {
         store.favoriteClicked = !store.favoriteClicked
+    },
+    setWineries(w) {
+        store.wineries = w;
+    },
+    setCities(c) {
+        store.cities = c;
+    },
+    setLoggedIn(value) {
+        store.loggedIn = value
     }
 };

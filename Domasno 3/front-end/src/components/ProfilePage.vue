@@ -17,8 +17,8 @@
             <h5>Мои коментари</h5>
           </div>
           <div class="scrollbar">
-            <div v-for="review in userReviews" :key="review.id">
-              <ProfileComment :username="review.user.username" :comment="review.comment" :rating="review.rating" :id="review.id"></ProfileComment>
+            <div v-for="review in userInfo.reviews" :key="review.id">
+              <ProfileComment :username="userInfo.username" :comment="review.comment" :rating="review.rating" :id="review.id"></ProfileComment>
             </div>
           </div>
         </div>
@@ -31,6 +31,7 @@
 import userimg from '../assets/userimg.png';
 import ProfileComment from "@/components/ProfileComment";
 import ProfileForm from "@/components/ProfileForm";
+import {store} from "@/store/store";
 export default {
   name: "ProfilePage",
   components: {
@@ -49,29 +50,15 @@ export default {
   },
   methods: {
     async fetchUserInfo() {
-      //fetching user information
       const requestOptions = {
         method: "GET",
         headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")},
       };
-      const response = await fetch("https://dians-backend.onrender.com/profiles/profile/", requestOptions);
+      const response = await fetch(store.api_url + "/profiles/profile/", requestOptions);
       this.userInfo = await response.json();
       this.userInfo = this.userInfo["user"];
+      this.userReviews = this.userInfo.reviews
 
-      // fetching userReviews
-      const response1 = await fetch("https://dians-backend.onrender.com/wineries");
-      this.wineries = await response1.json();
-      this.wineries = JSON.parse(JSON.stringify(this.wineries))["wineries"];
-
-      this.userReviews = this.wineries.reduce((reviewsByCurrentUser, winery) => {
-        if (winery.reviews && winery.reviews.length > 0) {
-          const userReviews = winery.reviews.filter(review => review.user.username === this.userInfo.username);
-          if (userReviews.length > 0) {
-            reviewsByCurrentUser.push(...userReviews);
-          }
-        }
-        return reviewsByCurrentUser;
-      }, []);
     },
   }
 }
@@ -122,7 +109,7 @@ export default {
   }
 
   .scrollbar {
-    height: 100%;
+    height: 98%;
     overflow-y: scroll;
     overflow-x: hidden;
     padding-right: .5rem;

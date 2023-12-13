@@ -27,13 +27,13 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-md-6">
-          <label class="labels">Стара лозинка</label>
-          <input type="text" class="form-control" value="" placeholder="Стара лозинка">
-        </div>
-        <div class="col-md-6">
+<!--        <div class="col-md-6">-->
+<!--          <label class="labels">Стара лозинка</label>-->
+<!--          <input type="text" class="form-control" value="" placeholder="Стара лозинка" v-model="oldPassword">-->
+<!--        </div>-->
+        <div class="col-md-12">
           <label class="labels">Нова лозинка</label>
-          <input type="text" class="form-control" value="" placeholder="Нова лозинка">
+          <input type="text" class="form-control" value="" placeholder="Нова лозинка" v-model="newPassword">
         </div>
       </div>
       <div class="mt-5 text-center"><button class="btn" type="submit" @click="saveInformation">Зачувај</button></div>
@@ -42,6 +42,9 @@
 </template>
 
 <script>
+import {store} from "@/store/store";
+import router from "@/router";
+
 export default {
   name: "ProfileForm",
   data() {
@@ -59,12 +62,33 @@ export default {
         method: "GET",
         headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")},
       };
-      const response = await fetch("https://dians-backend.onrender.com/profiles/profile/", requestOptions);
+      const response = await fetch(store.api_url + "/profiles/profile/", requestOptions);
       this.userInfo = await response.json();
       this.userInfo = this.userInfo["user"];
     },
-    saveInformation() {
-      //TODO implement
+    async saveInformation() {
+      const requestOptions = {
+        method: "POST",
+        headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")},
+        body: JSON.stringify({
+          "first_name": this.userInfo.first_name,
+          "last_name": this.userInfo.last_name,
+          "email": this.userInfo.email,
+          "username": this.userInfo.username,
+          "old_password": this.oldPassword,
+          "new_password": this.newPassword,
+        })
+      };
+
+      console.log(this.userInfo.first_name)
+      console.log(this.userInfo.last_name)
+      console.log(this.userInfo.email)
+      console.log(this.userInfo.username)
+      console.log(this.oldPassword)
+      console.log(this.newPassword)
+
+      await fetch(store.api_url + "/profiles/profile/", requestOptions);
+      router.go(0)
     }
   }
 }

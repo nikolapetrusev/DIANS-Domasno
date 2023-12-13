@@ -1,5 +1,5 @@
 <template>
-  <l-map v-if="splitCoordinates.length > 0" :center="center" :zoom="zoom">
+  <l-map :center="center" :zoom="zoom">
     <l-tile-layer
         url="https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png"
         attribution='<a href="https://stadiamaps.com/">Stadia Maps</a>'
@@ -21,7 +21,7 @@ export default {
     LMarker,
   },
   props: {
-    // wineries: Object,
+    wineries: Object,
   },
   data() {
     return {
@@ -30,9 +30,6 @@ export default {
       splitCoordinates: [],
     }
   },
-  watch: {
-    filteredWineries: 'getCoordinates',
-  },
   computed: {
     customMarkerIcon() {
       return new L.Icon({
@@ -40,56 +37,19 @@ export default {
         iconSize: [160, 100]
       })
     },
-  },
-  mounted() {
-    this.getCoordinates()
-  },
-  methods: {
-    // TODO so ako tuka praam fetch na podatocite i posle nekako so .then presmetam splitCoordinates
-    // getCoordinates() {
-    //   // console.log(this.filteredWineries)
-    //
-    //   for (let winery of this.filteredWineries) {
-    //     if(winery["coords"]) {
-    //       const latitude = parseFloat(winery.coords.latitude);
-    //       const longitude = parseFloat(winery.coords.longitude);
-    //       this.splitCoordinates.push([latitude, longitude])
-    //     }
-    //   }
-    //
-    //   // console.log(this.splitCoordinates)
-    // }
-
-    async getCoordinates() {
-      const response = await fetch("https://dians-backend.onrender.com/wineries");
-      this.wineries = await response.json();
-      this.wineries = JSON.parse(JSON.stringify(this.wineries))["wineries"];
-
-      this.wineries = this.filterWineries(this.wineries)
-
-      for (let winery of this.wineries) {
-        if (winery["coords"]) {
-          const latitude = parseFloat(winery.coords.latitude);
-          const longitude = parseFloat(winery.coords.longitude);
-          this.splitCoordinates.push([latitude, longitude])
-        }
-      }
-
-      console.log(this.splitCoordinates)
-    },
-    filterWineries(wineries) {
+    filteredWineries() {
       let filtered = null;
       if(!store.selectedCity && store.selectedRating === 0) { // site vinarii
-        filtered = wineries;
+        filtered = this.wineries;
       }
       else if(store.selectedCity && store.selectedRating > 0) { // izbral i grad i rejtin
-        filtered = wineries.filter(winery => winery.city.name === store.selectedCity && winery.rating >= store.selectedRating);
+        filtered = this.wineries.filter(winery => winery.city.name === store.selectedCity && winery.rating >= store.selectedRating);
       }
       else if(store.selectedCity) { // izbral grad
-        filtered = wineries.filter(winery => winery.city.name === store.selectedCity);
+        filtered = this.wineries.filter(winery => winery.city.name === store.selectedCity);
       }
       else { // izbral rejting
-        filtered = wineries.filter(winery => winery.rating >= store.selectedRating);
+        filtered = this.wineries.filter(winery => winery.rating >= store.selectedRating);
       }
 
       // if(store.favoriteClicked) {
@@ -97,7 +57,42 @@ export default {
       // }
 
       return filtered
-    }
+    },
+    // splitCoordinates() {
+    //   console.log(this.filteredWineries)
+    //
+    //   let coords = []
+    //
+    //   for (let winery of this.filteredWineries) {
+    //     if(winery["coords"]) {
+    //       const latitude = parseFloat(winery.coords.latitude);
+    //       const longitude = parseFloat(winery.coords.longitude);
+    //       coords.push([latitude, longitude])
+    //     }
+    //   }
+    //
+    //   console.log(coords)
+    //
+    //   return coords
+    // },
+  },
+  mounted() {
+    this.getCoordinates();
+  },
+  methods: {
+    getCoordinates() {
+      // console.log(this.filteredWineries)
+
+      for (let winery of this.filteredWineries) {
+        if(winery["coords"]) {
+          const latitude = parseFloat(winery.coords.latitude);
+          const longitude = parseFloat(winery.coords.longitude);
+          this.splitCoordinates.push([latitude, longitude])
+        }
+      }
+
+      // console.log(this.splitCoordinates)
+    },
   }
 }
 </script>

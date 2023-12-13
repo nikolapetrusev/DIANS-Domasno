@@ -14,6 +14,8 @@
 <script>
 import CommentCard from "@/components/CommentCard";
 import EditableComment from "@/components/EditableComment";
+import router from "@/router";
+import {store} from "@/store/store";
 export default {
   name: "ProfileComment",
   components: {EditableComment, CommentCard },
@@ -32,8 +34,20 @@ export default {
     editComment() {
       this.isEditing = !this.isEditing
     },
-    deleteComment() {
-      //TODO implement
+    async deleteComment() {
+      const requestOptions = {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + sessionStorage.getItem("access")
+        },
+        body: JSON.stringify({
+          "review_id": this.id,
+        })
+      };
+      await fetch(store.api_url + "/profiles/reviews/", requestOptions);
+
+      router.go(0)
     },
   }
 }

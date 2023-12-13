@@ -18,8 +18,8 @@
         <button type="submit" class="btn" @click="clearCity">✖</button>
       </div>
       <div class="scrollbar">
-        <div v-for="city in allCities" :key="city">
-          <button type="submit" class="btn btn-link" @click="selectCity(city)">{{ city }}</button>
+        <div v-for="city in cities" :key="city.id">
+          <button type="submit" class="btn btn-link" @click="selectCity(city)">{{ city.name }}</button>
         </div>
       </div>
     </div>
@@ -27,40 +27,27 @@
 </template>
 
 <script>
-import { mutations } from '../store/store.js'
+import {mutations, store} from '../store/store.js'
 export default {
   name: "WineryFilter",
   data() {
     return {
-      cities: Array,
+      cities: store.cities,
       rating: null,
     }
   },
-  props: {
-    wineries: Object,
+  mounted() {
+    // this.fetchCities();
   },
-  computed: {
-    allCities() {
-      const cities = new Set();
-      if(Array.isArray(this.wineries)) {
-        this.wineries.forEach(winery => cities.add(winery.city.name));
-      }
-      return Array.from(cities);
-    },
-  },
-  // mounted() {
-  //   this.fetchCities();
-  // },
   methods: {
     // async fetchCities() {
-    //   const response = await fetch("https://dians-backend.onrender.com/wineries");
-    //   this.wineries = await response.json();
-    //   this.wineries = JSON.parse(JSON.stringify(this.wineries))["wineries"]
-    //   this.allCities()
+    //   const response = await fetch(store.api_url + "/cities");
+    //   this.cities = await response.json();
+    //   this.cities = JSON.parse(JSON.stringify(this.cities))["cities"]
     // },
     // TODO proveri dali se vnesuva pravilna vrednost za rejtingot (0-5)
     selectCity(city) {
-      mutations.setSelectedCity(city);
+      mutations.setSelectedCity(city.name);
     },
     selectRating() {
       mutations.setSelectedRating(this.rating);

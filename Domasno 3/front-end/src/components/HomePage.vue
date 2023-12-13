@@ -1,4 +1,5 @@
 <template>
+<!--  <AppHeader></AppHeader>-->
   <div class="main d-flex justify-content-center align-items-center">
     <div class="cont d-flex justify-content-around align-items-center gap-2">
       <WineryFilter :wineries="wineries"></WineryFilter>
@@ -8,34 +9,53 @@
       </div>
     </div>
   </div>
+<!--  <AppFooter></AppFooter>-->
 </template>
 
 <script>
 import WineryFilter from "@/components/WineryFilter";
 import WineriesList from "@/components/WineriesList";
 import HomePageMap from "@/components/HomePageMap";
+// import AppHeader from "@/components/Header";
+// import AppFooter from "@/components/Footer";
 import mapImg from "@/assets/mapImage.png";
+import {store} from "@/store/store";
 export default {
   name: "HomePage",
-  components: {WineriesList, WineryFilter, HomePageMap},
+  components: {
+    WineriesList,
+    WineryFilter,
+    HomePageMap,
+    // AppHeader,
+    // AppFooter
+  },
   data() {
     return {
-      wineries: "",
+      wineries: store.wineries,
       mapImg: mapImg,
       latitude: 41.6086,
       longitude: 21.7453,
       zoom: 8,
     }
   },
-  mounted() {
-    this.fetchWineries()
-  },
+  // mounted() {
+  //   this.fetchWineries()
+  // },
+  // created() {
+  //   const fetchWineries = async ()  => {
+  //     const response = await fetch(store.api_url + "/wineries");
+  //     this.wineries = await response.json();
+  //     this.wineries = JSON.parse(JSON.stringify(this.wineries))["wineries"];
+  //   }
+  //   fetchWineries();
+  // },
   methods: {
-    async fetchWineries() {
-      const response = await fetch("https://dians-backend.onrender.com/wineries");
-      this.wineries = await response.json();
-      this.wineries = JSON.parse(JSON.stringify(this.wineries))["wineries"];
-    },
+    // async fetchWineries() {
+    //   const response = await fetch(store.api_url + "/wineries");
+    //   this.wineries = await response.json();
+    //   this.wineries = JSON.parse(JSON.stringify(this.wineries))["wineries"];
+    // },
+    // smeni tuka za da poceka da se zemat pod
   }
 }
 </script>

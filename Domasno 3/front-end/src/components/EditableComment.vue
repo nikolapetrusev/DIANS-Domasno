@@ -19,6 +19,8 @@
 </template>
 
 <script>
+// import router from "@/router";
+import {store} from "@/store/store";
 import router from "@/router";
 
 export default {
@@ -28,6 +30,7 @@ export default {
       isEditing: false,
       userComment: this.comment,
       userRating: this.rating,
+      componentKey: 0,
     }
   },
   props: {
@@ -39,24 +42,20 @@ export default {
   methods: {
     async saveEdit() {
       const requestOptions = {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + sessionStorage.getItem("access")
         },
         body: JSON.stringify({
           "rating": this.userRating,
-          "winery_id": this.id,
+          "review_id": this.id,
           "comment": this.userComment
         })
       };
+      await fetch(store.api_url + "/profiles/reviews/", requestOptions);
 
-      console.log(this.userRating)
-      console.log(this.userComment)
-      console.log(this.id)
-
-      await fetch("https://dians-backend.onrender.com/profiles/reviews/", requestOptions);
-      await router.push("/profile")
+      router.go(0)
     },
   }
 }

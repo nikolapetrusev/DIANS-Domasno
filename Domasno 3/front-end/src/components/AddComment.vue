@@ -18,7 +18,7 @@
             <div class="comment-btns mt-2">
               <div class="row">
                 <div class="col-6">
-                  <button class="btn btn-success send btn-sm" type="submit" @click="sendReview">Зачувај<i class="fa fa-long-arrow-right ml-1"></i></button>
+                  <button class="btn send btn-sm" type="submit" @click="sendReview">Зачувај<i class="fa fa-long-arrow-right ml-1"></i></button>
                 </div>
               </div>
             </div>
@@ -30,20 +30,18 @@
 </template>
 
 <script>
-import {computed} from "vue";
+// import {computed} from "vue";
 import {store} from "@/store/store";
+import router from "@/router";
+// import router from "@/router";
 
 export default {
   name: "AddComment",
-  setup() {
-    // TODO ako ne biva vaka zemi kako prop
-    const selectedWinery = computed(() => store.selectedWinery);
-
-    // console.log(selectedWinery)
-
-    return {
-      selectedWinery,
-    }
+  computed: {
+    selectedWinery() {
+      const storedWinery = sessionStorage.getItem("selectedWinery");
+      return JSON.parse(storedWinery);
+    },
   },
   methods: {
     async sendReview() {
@@ -63,17 +61,12 @@ export default {
           })
         };
 
-        const response = await fetch("https://dians-backend.onrender.com/profiles/reviews/", requestOptions);
+        await fetch(store.api_url + "/profiles/reviews/", requestOptions);
+        router.go(0)
 
-        if (!response.ok) {
-          console.error("Error sending review:", response.statusText);
-        } else {
-          console.log("Review sent successfully");
-        }
       } catch (error) {
         console.error("An error occurred:", error);
       }
-
     },
     getSelectedRating() {
       const checkedRating = document.querySelector('.rating input:checked');

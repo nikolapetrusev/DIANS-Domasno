@@ -52,6 +52,7 @@
 
 <script>
 import router from "@/router";
+import {store} from "@/store/store";
 
 export default {
   name: "RegisterComponent",
@@ -63,10 +64,9 @@ export default {
         body: JSON.stringify({ "username":this.username, "password":this.password, "password2": this.repeatPassword,
           "email": this.email, "first_name": this.firstname, "last_name": this.lastname})
       };
-      await fetch("https://dians-backend.onrender.com/auth/register/", requestOptions);
+      await fetch(store.api_url + "/auth/register/", requestOptions);
 
-
-      router.push("/")
+      await router.push("/login")
     }
   }
 }
@@ -104,6 +104,11 @@ export default {
     background-color: white;
     color: var(--primary-color);
     border: 1px solid var(--primary-color);
+  }
+
+  .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(130, 0, 0, 0.5);
   }
 
   .pad {
