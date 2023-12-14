@@ -32,17 +32,15 @@ const routes = [
     name: 'winery',
     component: () => import('../components/Winery'),
     beforeEnter: async (to, from, next) => {
-        const response = await fetch(store.api_url + "/wineries");
-        let wineries = await response.json();
-        wineries = JSON.parse(JSON.stringify(wineries))["wineries"];
+      const response = await fetch(store.api_url + "/wineries");
+      let wineries = await response.json();
+      wineries = JSON.parse(JSON.stringify(wineries))["wineries"];
 
-        const storedWinery = JSON.parse(sessionStorage.getItem("selectedWinery"));
-        const winery = wineries.filter(winery => winery.id === storedWinery.id)[0]
-        sessionStorage.setItem("selectedWinery", JSON.stringify(winery))
+      const storedWinery = JSON.parse(sessionStorage.getItem("selectedWinery"));
+      const winery = wineries.filter(winery => winery.id === storedWinery.id)[0]
+      sessionStorage.setItem("selectedWinery", JSON.stringify(winery))
 
-        console.log(winery)
-        console.log(JSON.stringify(winery.reviews))
-        sessionStorage.setItem("selectedWineryReviews", JSON.stringify(winery.reviews))
+      sessionStorage.setItem("selectedWineryReviews", JSON.stringify(winery.reviews))
 
       next()
     }

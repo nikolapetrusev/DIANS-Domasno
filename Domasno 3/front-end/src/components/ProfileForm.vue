@@ -80,13 +80,6 @@ export default {
         })
       };
 
-      console.log(this.userInfo.first_name)
-      console.log(this.userInfo.last_name)
-      console.log(this.userInfo.email)
-      console.log(this.userInfo.username)
-      console.log(this.oldPassword)
-      console.log(this.newPassword)
-
       await fetch(store.api_url + "/profiles/profile/", requestOptions);
       router.go(0)
     }

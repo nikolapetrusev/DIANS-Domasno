@@ -29,7 +29,7 @@ export default  {
 <style scoped>
   .card {
     background-color: var(--secondary-color);
-    width: 100%
+    width: 100%;
   }
 
   .top {

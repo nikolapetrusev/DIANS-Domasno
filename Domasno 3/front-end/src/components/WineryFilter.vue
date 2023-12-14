@@ -1,7 +1,7 @@
 <template>
   <div class="filters col-md-3 p-2">
     <div class="top d-flex justify-content-around align-items-center">
-      <form @submit="selectRating">
+      <form @submit.prevent="selectRating">
         <div class="ratingFilter d-flex align-items-center">
           <div class="field">
             <label for="rating">Филтрирај според оцена</label>
@@ -10,6 +10,9 @@
           <button type="submit" class="btn btn-block btn-sm">Примени</button>
         </div>
       </form>
+      <div v-if="showErrorMessage" class="error-message">
+        {{ this.errorMessage }}
+      </div>
       <button type="submit" class="btn" @click="clearRating">✖</button>
     </div>
     <div class="bottom">
@@ -34,6 +37,8 @@ export default {
     return {
       cities: store.cities,
       rating: null,
+      showErrorMessage: false,
+      errorMessage: "",
     }
   },
   mounted() {
@@ -50,7 +55,15 @@ export default {
       mutations.setSelectedCity(city.name);
     },
     selectRating() {
-      mutations.setSelectedRating(this.rating);
+      if(this.rating >= 1 && this.rating <= 5) {
+        mutations.setSelectedRating(this.rating);
+      } else {
+        this.showErrorMessage = true
+        this.errorMessage = "Rating should be a value between [1,5]"
+        setTimeout(() => {
+          this.showErrorMessage = false;
+        }, 3000);
+      }
     },
     clearRating() {
       this.rating = null
@@ -145,10 +158,22 @@ export default {
     background-color: var(--primary-color);
   }
 
-  @media only screen and (max-width: 1200px) {
-    .ratingFilter {
-      flex-direction: column;
-      align-items: center;
-    }
+  /*@media only screen and (max-width: 1200px) {*/
+  /*  .ratingFilter {*/
+  /*    flex-direction: column;*/
+  /*    align-items: center;*/
+  /*  }*/
+  /*}*/
+
+  .error-message {
+    position: fixed;
+    top: 82px;
+    left: 10.5%;
+    transform: translateX(-50%);
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 </style>

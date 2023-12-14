@@ -18,7 +18,7 @@
             <div class="comment-btns mt-2">
               <div class="row">
                 <div class="col-6">
-                  <button class="btn send btn-sm" type="submit" @click="sendReview">Зачувај<i class="fa fa-long-arrow-right ml-1"></i></button>
+                  <button class="btn send btn-sm" type="submit" @click.prevent="sendReview">Зачувај<i class="fa fa-long-arrow-right ml-1"></i></button>
                 </div>
               </div>
             </div>
@@ -26,6 +26,9 @@
         </div>
       </div>
     </div>
+  </div>
+  <div v-if="showErrorMessage" class="error-message">
+    {{ this.errorMessage }}
   </div>
 </template>
 
@@ -37,6 +40,12 @@ import router from "@/router";
 
 export default {
   name: "AddComment",
+  data() {
+    return {
+      showErrorMessage: false,
+      errorMessage: "",
+    }
+  },
   computed: {
     selectedWinery() {
       const storedWinery = sessionStorage.getItem("selectedWinery");
@@ -45,27 +54,36 @@ export default {
   },
   methods: {
     async sendReview() {
-      try {
-        const selectedRating = this.getSelectedRating();
+      console.log(sessionStorage.getItem("loggedIn"))
+      if(sessionStorage.getItem("loggedIn") === "false" || sessionStorage.getItem("loggedIn") === null) {
+        router.push("/login")
+        return;
+      }
+      const selectedRating = this.getSelectedRating();
 
-        const requestOptions = {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + sessionStorage.getItem("access")
-          },
-          body: JSON.stringify({
-            "rating": selectedRating,
-            "winery_id": this.selectedWinery.id,
-            "comment": this.comment
-          })
-        };
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + sessionStorage.getItem("access")
+        },
+        body: JSON.stringify({
+          "rating": selectedRating,
+          "winery_id": this.selectedWinery.id,
+          "comment": this.comment
+        })
+      };
 
-        await fetch(store.api_url + "/profiles/reviews/", requestOptions);
+      const response = await fetch(store.api_url + "/profiles/reviews/", requestOptions);
+
+      if(response.status === 200) {
         router.go(0)
-
-      } catch (error) {
-        console.error("An error occurred:", error);
+      } else {
+        this.showErrorMessage = true
+        this.errorMessage = "Please fill out all fields"
+        setTimeout(() => {
+          this.showErrorMessage = false;
+        }, 3000);
       }
     },
     getSelectedRating() {
@@ -151,5 +169,17 @@ export default {
 
   .rating:hover>input:checked~label:before {
     opacity: 0.4
+  }
+
+  .error-message {
+    position: fixed;
+    top: 56.5%;
+    left: 38%;
+    transform: translateX(-50%);
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 </style>

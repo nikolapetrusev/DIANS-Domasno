@@ -3,9 +3,7 @@
     <div class="row">
       <div class="col-md-7 flex-column left">
         <WineryInfo></WineryInfo>
-        <div class="left2">
-          <AddComment></AddComment>
-        </div>
+        <AddComment></AddComment>
       </div>
       <div class="right col-md-5">
         <CommentBox :selectedWinery="selectedWinery"></CommentBox>
@@ -78,7 +76,7 @@ export default {
   .left {
     padding-left: 2rem;
     width:55%;
-    height: 100%;
+    height: 93%;
     margin-right: 2rem;
   }
 

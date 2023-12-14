@@ -19,23 +19,27 @@
                 </div>
 
                 <div class="form-outline mb-2">
-                  <input type="text" class="form-control form-control-lg" v-model="email" placeholder="Email" required/>
+                  <input type="text" class="form-control form-control-lg" v-model="email" placeholder="Email"/>
                 </div>
 
                 <div class="form-outline mb-2">
-                  <input type="text" class="form-control form-control-lg" v-model="username" placeholder="Корисничко име" required/>
+                  <input type="text" class="form-control form-control-lg" v-model="username" placeholder="Корисничко име"/>
                 </div>
 
                 <div class="form-outline mb-2">
-                  <input type="password" class="form-control form-control-lg" v-model="password" placeholder="Лозинка" required/>
+                  <input type="password" class="form-control form-control-lg" v-model="password" placeholder="Лозинка"/>
                 </div>
 
                 <div class="form-outline mb-4">
-                  <input type="password" class="form-control form-control-lg" v-model="repeatPassword" placeholder="Лозинка" required/>
+                  <input type="password" class="form-control form-control-lg" v-model="repeatPassword" placeholder="Лозинка"/>
                 </div>
 
                 <button class="btn btn-lg btn-block" type="submit">Регистрација</button>
               </form>
+
+              <div v-if="showErrorMessage" class="error-message">
+                {{ this.errorMessage }}
+              </div>
 
               <hr class="my-4">
               <div>
@@ -52,10 +56,16 @@
 
 <script>
 import router from "@/router";
-import {store} from "@/store/store";
+import { store} from "@/store/store";
 
 export default {
   name: "RegisterComponent",
+  data() {
+    return {
+      showErrorMessage: false,
+      errorMessage: "",
+    }
+  },
   methods: {
     async register() {
       const requestOptions = {
@@ -64,9 +74,23 @@ export default {
         body: JSON.stringify({ "username":this.username, "password":this.password, "password2": this.repeatPassword,
           "email": this.email, "first_name": this.firstname, "last_name": this.lastname})
       };
-      await fetch(store.api_url + "/auth/register/", requestOptions);
+      const response = await fetch(store.api_url + "/auth/register/", requestOptions);
+      if (response.status === 200) {
+        const data = await response.json();
+        sessionStorage.setItem("access", data.access);
+        sessionStorage.setItem("refresh", data.refresh);
 
-      await router.push("/login")
+        await router.push("/login")
+      } else {
+        this.showErrorMessage = true
+        this.errorMessage = this.username === undefined || this.password === undefined || this.repeatPassword === undefined
+          || this.email === undefined || this.firstname === undefined || this.lastname === undefined
+            ? "Please fill out all fields"
+            : "Invalid user credentials";
+        setTimeout(() => {
+          this.showErrorMessage = false;
+        }, 3000);
+      }
     }
   }
 }
@@ -119,5 +143,17 @@ export default {
     color: var(--primary-color);
     text-decoration: underline;
     font-weight: 700;
+  }
+
+  .error-message {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 </style>

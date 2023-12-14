@@ -20,6 +20,10 @@
                 <button class="btn btn-lg btn-block" type="submit">Најава</button>
               </form>
 
+              <div v-if="showErrorMessage" class="error-message">
+                {{ this.errorMessage }}
+              </div>
+
               <hr class="my-4">
               <div>
                 <p class="mb-0">Немате профил? <router-link to="/register">Регистрирајте се!</router-link>
@@ -42,7 +46,9 @@ export default {
   data() {
     return {
       refresh: null,
-      access: null
+      access: null,
+      showErrorMessage: false,
+      errorMessage: "",
     }
   },
   methods: {
@@ -62,6 +68,15 @@ export default {
 
         mutations.setLoggedIn(true)
         await router.push("/")
+      } else {
+        this.showErrorMessage = true
+        console.log(this.username)
+        this.errorMessage = this.username === undefined || this.password === undefined
+            ? "Please fill out all fields"
+            : "Invalid user credentials";
+        setTimeout(() => {
+          this.showErrorMessage = false;
+        }, 3000);
       }
     },
   }
@@ -114,5 +129,17 @@ export default {
     color: var(--primary-color);
     text-decoration: underline;
     font-weight: 700;
+  }
+
+  .error-message {
+    position: fixed;
+    top: 130px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 </style>
