@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from app.models import Review
 from app.serializers import ReviewSerializer
-from profiles.exceptions import InvalidInputError
+from profiles.exceptions import InvalidInputError, UserHasNoPermission
 
 
 class ReviewService:
@@ -23,13 +23,15 @@ class ReviewService:
         review = Review.objects.get(pk=data["review_id"])
         serializer = ReviewSerializer(review, data=data)
 
-        if serializer.is_valid() and review.user == user:
+        if review.user != user:
+            raise UserHasNoPermission(user.username, "ReviewService.edit_review()")
+
+        if serializer.is_valid():
             serializer.save(user=user)
         else:
             raise InvalidInputError("ReviewService.edit_review()")
-        
+
     @staticmethod
     def delete_review(data: dict[str, Any]) -> None:
         review = Review.objects.get(pk=data["review_id"])
         review.delete()
-            
