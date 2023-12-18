@@ -39,50 +39,31 @@ export default {
     },
     filteredWineries() {
       let filtered = null;
-      if(!store.selectedCity && store.selectedRating === 0) { // site vinarii
+      if(!store.selectedCity && store.selectedRating === 0) {
         filtered = this.wineries;
       }
-      else if(store.selectedCity && store.selectedRating > 0) { // izbral i grad i rejtin
+      else if(store.selectedCity && store.selectedRating > 0) {
         filtered = this.wineries.filter(winery => winery.city.name === store.selectedCity && winery.rating >= store.selectedRating);
       }
-      else if(store.selectedCity) { // izbral grad
+      else if(store.selectedCity) {
         filtered = this.wineries.filter(winery => winery.city.name === store.selectedCity);
       }
-      else { // izbral rejting
+      else {
         filtered = this.wineries.filter(winery => winery.rating >= store.selectedRating);
       }
 
-      // if(store.favoriteClicked) {
-      //   filtered = filtered.filter(winery => favorites.includes(winery))
-      // }
+      if(store.favoriteClicked) {
+        filtered = filtered.filter(winery => sessionStorage.getItem("favorites").includes(winery))
+      }
 
       return filtered
     },
-    // splitCoordinates() {
-    //   console.log(this.filteredWineries)
-    //
-    //   let coords = []
-    //
-    //   for (let winery of this.filteredWineries) {
-    //     if(winery["coords"]) {
-    //       const latitude = parseFloat(winery.coords.latitude);
-    //       const longitude = parseFloat(winery.coords.longitude);
-    //       coords.push([latitude, longitude])
-    //     }
-    //   }
-    //
-    //   console.log(coords)
-    //
-    //   return coords
-    // },
   },
   mounted() {
     this.getCoordinates();
   },
   methods: {
     getCoordinates() {
-      // console.log(this.filteredWineries)
-
       for (let winery of this.filteredWineries) {
         if(winery["coords"]) {
           const latitude = parseFloat(winery.coords.latitude);
@@ -90,8 +71,6 @@ export default {
           this.splitCoordinates.push([latitude, longitude])
         }
       }
-
-      // console.log(this.splitCoordinates)
     },
   }
 }

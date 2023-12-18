@@ -14,15 +14,14 @@ const routes = [
 
       const response2 = await fetch(store.api_url + "/cities");
       let cities = await response2.json();
-      cities = JSON.parse(JSON.stringify(cities))["cities"]
+      cities = JSON.parse(JSON.stringify(cities))["data"]
       mutations.setCities(cities)
 
-      if(from.name === 'login') {
-        console.log("COMING FROM LOGIN")
+      if(store.loggedIn===true) {
         sessionStorage.setItem("loggedIn", "true")
+      } else {
+        sessionStorage.setItem("loggedIn", "false")
       }
-
-      //TODO SET GUARD WHEN GOING FROM LOGOUT TO HOME
 
       next()
     }
@@ -66,14 +65,5 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes
 })
-
-
-//TODO CHECK IT OUT
-// router.beforeEach((to, from, next) => {
-//   // Update the header based on the user's login status
-//   const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
-//   mutations.setLoggedIn(loggedIn);
-//   next();
-// });
 
 export default router

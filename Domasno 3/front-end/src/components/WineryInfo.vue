@@ -20,20 +20,13 @@
 
 <script>
 import { store } from '@/store/store.js'
-// import { computed } from "vue";
 export default {
   name: "WineryInfo",
-  // data() {
-  //   return {
-  //     userLoggedIn: store.loggedIn
-  //   }
-  // },
   computed: {
     userLoggedIn() {
       return sessionStorage.getItem("loggedIn") === "true"
     },
     selectedWinery() {
-      console.log(JSON.parse(sessionStorage.getItem("selectedWinery")))
       const storedWinery = sessionStorage.getItem("selectedWinery");
       return JSON.parse(storedWinery);
     }

@@ -64,16 +64,15 @@ export default {
         const data = await response.json();
         sessionStorage.setItem("access", data.access);
         sessionStorage.setItem("refresh", data.refresh);
-        // sessionStorage.setItem("loggedIn", "true")
 
         mutations.setLoggedIn(true)
         await router.push("/")
       } else {
         this.showErrorMessage = true
-        console.log(this.username)
         this.errorMessage = this.username === undefined || this.password === undefined
             ? "Please fill out all fields"
             : "Invalid user credentials";
+
         setTimeout(() => {
           this.showErrorMessage = false;
         }, 3000);

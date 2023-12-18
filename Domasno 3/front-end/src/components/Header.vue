@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import router from "@/router";
 import {mutations, store} from "@/store/store";
 
 export default {
@@ -37,7 +36,7 @@ export default {
       sessionStorage.setItem('loggedIn', "false");
 
       mutations.setLoggedIn(false);
-      router.push("/")
+      window.location.reload()
     }
   }
 }

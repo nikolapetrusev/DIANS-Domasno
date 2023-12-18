@@ -12,7 +12,10 @@
 import AppHeader from "@/components/Header";
 import AppFooter from "@/components/Footer";
 export default {
-  components: {AppFooter, AppHeader}
+  components: {
+    AppFooter,
+    AppHeader
+  },
 }
 </script>
 

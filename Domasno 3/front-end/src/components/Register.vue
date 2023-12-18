@@ -75,7 +75,15 @@ export default {
           "email": this.email, "first_name": this.firstname, "last_name": this.lastname})
       };
       const response = await fetch(store.api_url + "/auth/register/", requestOptions);
-      if (response.status === 200) {
+      console.log(response.status)
+      console.log(this.username)
+      console.log(this.email)
+      console.log(this.password)
+      console.log(this.repeatPassword)
+      console.log(this.email)
+      console.log(this.firstname)
+      console.log(this.lastname)
+      if (response.status === 201) {
         const data = await response.json();
         sessionStorage.setItem("access", data.access);
         sessionStorage.setItem("refresh", data.refresh);

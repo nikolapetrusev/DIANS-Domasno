@@ -41,16 +41,7 @@ export default {
       errorMessage: "",
     }
   },
-  mounted() {
-    // this.fetchCities();
-  },
   methods: {
-    // async fetchCities() {
-    //   const response = await fetch(store.api_url + "/cities");
-    //   this.cities = await response.json();
-    //   this.cities = JSON.parse(JSON.stringify(this.cities))["cities"]
-    // },
-    // TODO proveri dali se vnesuva pravilna vrednost za rejtingot (0-5)
     selectCity(city) {
       mutations.setSelectedCity(city.name);
     },

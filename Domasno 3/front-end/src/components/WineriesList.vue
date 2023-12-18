@@ -1,4 +1,4 @@
-<template v-if="!loading">
+<template>
   <div class="wineries col-md-6 p-2">
     <div class="d-flex justify-content-around">
       <div class="d-flex align-items-center textDiv">
@@ -20,7 +20,6 @@
 <script>
 import { store, mutations } from '@/store/store.js'
 import { computed } from 'vue'
-// import json from '../assets/vinarii.json'
 import router from "@/router"
 export default {
   name: "WineriesList",
@@ -43,22 +42,21 @@ export default {
   },
   computed: {
     userLoggedIn() {
-      console.log(sessionStorage.getItem("loggedIn"))
       return sessionStorage.getItem("loggedIn") === "true"
     },
     filteredWineries() {
       let filtered = null;
 
-      if(!store.selectedCity && store.selectedRating === 0) { // site vinarii
+      if(!store.selectedCity && store.selectedRating === 0) {
         filtered = this.wineries;
       }
-      else if(store.selectedCity && store.selectedRating > 0) { // izbral i grad i rejtin
+      else if(store.selectedCity && store.selectedRating > 0) {
         filtered = this.wineries.filter(winery => winery.city.name === store.selectedCity && winery.rating >= store.selectedRating);
       }
-      else if(store.selectedCity) { // izbral grad
+      else if(store.selectedCity) {
         filtered = this.wineries.filter(winery => winery.city.name === store.selectedCity);
       }
-      else { // izbral rejting
+      else {
         filtered = this.wineries.filter(winery => winery.rating >= store.selectedRating);
       }
 
@@ -90,9 +88,10 @@ export default {
         headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")}
       };
       const response = await fetch(store.api_url + "/profiles/favorites/", requestOptions);
-      this.favorites = await response.json();4
+      this.favorites = await response.json();
 
       this.favorites = JSON.parse(JSON.stringify(this.favorites))["favorites"]
+      sessionStorage.setItem("favorites", this.favorites)
     },
     getWineryPage(winery) {
       mutations.setSelectedWinery(winery);

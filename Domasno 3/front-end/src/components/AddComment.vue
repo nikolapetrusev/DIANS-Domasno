@@ -33,10 +33,8 @@
 </template>
 
 <script>
-// import {computed} from "vue";
 import {store} from "@/store/store";
 import router from "@/router";
-// import router from "@/router";
 
 export default {
   name: "AddComment",
@@ -54,12 +52,19 @@ export default {
   },
   methods: {
     async sendReview() {
-      console.log(sessionStorage.getItem("loggedIn"))
       if(sessionStorage.getItem("loggedIn") === "false" || sessionStorage.getItem("loggedIn") === null) {
-        router.push("/login")
+        await router.push("/login")
         return;
       }
       const selectedRating = this.getSelectedRating();
+
+      if(selectedRating === null) {
+        this.showErrorMessage = true
+        this.errorMessage = "Please fill out all fields"
+        setTimeout(() => {
+          this.showErrorMessage = false;
+        }, 3000);
+      }
 
       const requestOptions = {
         method: "POST",
@@ -70,21 +75,24 @@ export default {
         body: JSON.stringify({
           "rating": selectedRating,
           "winery_id": this.selectedWinery.id,
-          "comment": this.comment
+          "comment": this.comment === undefined ? "" : this.comment
         })
       };
 
       const response = await fetch(store.api_url + "/profiles/reviews/", requestOptions);
 
-      if(response.status === 200) {
-        router.go(0)
-      } else {
-        this.showErrorMessage = true
-        this.errorMessage = "Please fill out all fields"
-        setTimeout(() => {
-          this.showErrorMessage = false;
-        }, 3000);
-      }
+      console.log(this.comment)
+      console.log(selectedRating)
+      console.log(response.status)
+      if(response.status === 201) {
+        await router.go(0)}
+      // } else {
+      //   this.showErrorMessage = true
+      //   this.errorMessage = "Please fill out all fields"
+      //   setTimeout(() => {
+      //     this.showErrorMessage = false;
+      //   }, 3000);
+      // }
     },
     getSelectedRating() {
       const checkedRating = document.querySelector('.rating input:checked');
