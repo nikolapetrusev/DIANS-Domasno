@@ -14,7 +14,6 @@
 import WineryFilter from "@/components/WineryFilter";
 import WineriesList from "@/components/WineriesList";
 import HomePageMap from "@/components/HomePageMap";
-import mapImg from "@/assets/mapImage.png";
 import {store} from "@/store/store";
 export default {
   name: "HomePage",
@@ -26,7 +25,6 @@ export default {
   data() {
     return {
       wineries: store.wineries,
-      mapImg: mapImg,
       latitude: 41.6086,
       longitude: 21.7453,
       zoom: 8,

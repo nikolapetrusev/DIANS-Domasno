@@ -6,7 +6,10 @@
         <h5 v-else-if="this.selectedCity">Винарии - {{ this.selectedCity }}</h5>
         <h5 v-else-if="this.selectedRating>0">Винарии (>{{ this.selectedRating }}☆)</h5>
         <h5 v-else>Винарии</h5>
-        <i class="heart fas fa-heart" @click="showFavorites" :class="{'hide' : !userLoggedIn}"></i>
+        <div class="d-flex justify-content-end align-items-center gap-3">
+          <i class="visitedLocation fas fa-map-marker-alt" @click="showVisited" :class="{'hide' : !userLoggedIn}"></i>
+          <i class="heart fas fa-heart" @click="showFavorites" :class="{'hide' : !userLoggedIn}"></i>
+        </div>
       </div>
     </div>
     <div class="scrollbar">
@@ -19,30 +22,27 @@
 
 <script>
 import { store, mutations } from '@/store/store.js'
-import { computed } from 'vue'
 import router from "@/router"
 export default {
   name: "WineriesList",
   data() {
     return {
       favorites: "",
+      visited: "",
     }
   },
   props: {
     wineries: Object,
   },
-  setup() {
-    const selectedCity = computed(() => store.selectedCity);
-    const selectedRating = computed(() => store.selectedRating);
-
-    return {
-      selectedCity,
-      selectedRating,
-    };
-  },
   computed: {
-    userLoggedIn() {
-      return sessionStorage.getItem("loggedIn") === "true"
+    selectedCity() {
+      return store.selectedCity;
+    },
+    selectedRating() {
+      return store.selectedRating;
+    }
+    ,userLoggedIn() {
+      return sessionStorage.getItem("loggedIn") === "true";
     },
     filteredWineries() {
       let filtered = null;
@@ -71,6 +71,17 @@ export default {
         });
       }
 
+      if (store.visitedClicked) {
+        filtered = filtered.filter(winery => {
+          for (let visit of this.visited) {
+            if (winery.id === visit.id) {
+              return true;
+            }
+          }
+          return false;
+        });
+      }
+
       return filtered
     },
   },
@@ -81,7 +92,7 @@ export default {
         heartIcon.classList.toggle('active');
       }
 
-      mutations.toggleFavorite();
+      mutations.setFavoriteClicked(!store.favoriteClicked);
 
       const requestOptions = {
         method: "GET",
@@ -92,6 +103,26 @@ export default {
 
       this.favorites = JSON.parse(JSON.stringify(this.favorites))["favorites"]
       sessionStorage.setItem("favorites", this.favorites)
+    },
+    async showVisited() {
+      const visitedLocationIcon = document.querySelector('.visitedLocation');
+      if (visitedLocationIcon) {
+        visitedLocationIcon.classList.toggle('active');
+      }
+
+      mutations.setVisitedClicked(!store.visitedClicked);
+
+      const requestOptions = {
+        method: "GET",
+        headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")}
+      };
+      const response = await fetch(store.api_url + "/profiles/visited/", requestOptions);
+      this.visited = await response.json();
+
+      console.log(this.visited)
+
+      this.visited = JSON.parse(JSON.stringify(this.visited))["visited"]
+      sessionStorage.setItem("visited", this.visited)
     },
     getWineryPage(winery) {
       mutations.setSelectedWinery(winery);
@@ -107,7 +138,7 @@ export default {
     justify-content: flex-end;
     width: 85%;
     min-width: 20%;;
-    gap: 33%;
+    gap: 20%;
   }
 
   .btn-link {
@@ -141,7 +172,7 @@ export default {
     background-color: var(--primary-color);
   }
 
-  .heart {
+  .heart, .visitedLocation {
     font-size: 25px;
     color: darkgray;
   }

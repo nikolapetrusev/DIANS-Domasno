@@ -5,6 +5,7 @@ export const store = reactive({
     selectedWinery: null,
     selectedRating: 0,
     favoriteClicked: false,
+    visitedClicked: false,
     api_url: "http://127.0.0.1:8000",
     wineries: Array,
     cities: "",
@@ -21,8 +22,11 @@ export const mutations = {
     setSelectedRating(rating) {
         store.selectedRating = rating;
     },
-    toggleFavorite() {
-        store.favoriteClicked = !store.favoriteClicked
+    setFavoriteClicked(val) {
+        store.favoriteClicked = val
+    },
+    setVisitedClicked(val) {
+        store.visitedClicked = val
     },
     setWineries(w) {
         store.wineries = w;

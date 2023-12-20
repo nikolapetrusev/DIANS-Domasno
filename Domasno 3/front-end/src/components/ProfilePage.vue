@@ -1,7 +1,7 @@
 <template>
   <div class="container rounded bg-white mt-4">
     <div class="row">
-      <div class="col-md-3 border-right">
+      <div class="col-md-3 border-md-end">
         <div class="d-flex flex-column align-items-center text-center py-5">
           <img class="rounded-circle mt-5" :src="userIcon">
           <span class="font-weight-bold">{{ userInfo.username }}</span>
@@ -93,10 +93,6 @@ export default {
 
   img {
     width: 10rem;
-  }
-
-  .labels {
-    font-size: 11px
   }
 
   .comments {

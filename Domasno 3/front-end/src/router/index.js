@@ -17,9 +17,19 @@ const routes = [
       cities = JSON.parse(JSON.stringify(cities))["data"]
       mutations.setCities(cities)
 
-      if(store.loggedIn===true) {
+      mutations.setSelectedCity(null)
+      mutations.setSelectedRating(0)
+      mutations.setFavoriteClicked(false)
+      mutations.setVisitedClicked(false)
+      console.log(store.visitedClicked)
+
+      if(sessionStorage.getItem("access")!==null) {
         sessionStorage.setItem("loggedIn", "true")
       } else {
+        if(store.loggedIn===true) {
+          sessionStorage.setItem("loggedIn", "true")
+          console.log(sessionStorage.getItem("access"))
+        }
         sessionStorage.setItem("loggedIn", "false")
       }
 
@@ -38,8 +48,17 @@ const routes = [
       const storedWinery = JSON.parse(sessionStorage.getItem("selectedWinery"));
       const winery = wineries.filter(winery => winery.id === storedWinery.id)[0]
       sessionStorage.setItem("selectedWinery", JSON.stringify(winery))
-
       sessionStorage.setItem("selectedWineryReviews", JSON.stringify(winery.reviews))
+
+      if(sessionStorage.getItem("access")!==null) {
+        sessionStorage.setItem("loggedIn", "true")
+      } else {
+        if(store.loggedIn===true) {
+          sessionStorage.setItem("loggedIn", "true")
+          console.log(sessionStorage.getItem("access"))
+        }
+        sessionStorage.setItem("loggedIn", "false")
+      }
 
       next()
     }
@@ -58,6 +77,20 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: () => import('../components/ProfilePage'),
+    beforeEnter: async (to, from, next) => {
+
+      if(sessionStorage.getItem("access")!==null) {
+        sessionStorage.setItem("loggedIn", "true")
+      } else {
+        if(store.loggedIn===true) {
+          sessionStorage.setItem("loggedIn", "true")
+          console.log(sessionStorage.getItem("access"))
+        }
+        sessionStorage.setItem("loggedIn", "false")
+      }
+
+      next()
+    }
   }
 ]
 
