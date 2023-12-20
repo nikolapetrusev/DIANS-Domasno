@@ -6,12 +6,12 @@
           <p class="left-side small mb-0">{{ username }}</p>
           <div class="right-side d-flex align-items-center">
             <i class="fas fa-star mx-2 fa-xs"></i>
-            <input type="number" v-model="userRating" style="margin-left: -0.4rem; width: 3rem;"/>
+            <input class="form-control" type="number" min="1" max="5" step="1" v-model="userRating"/>
           </div>
         </div>
       </div>
       <div class="d-flex justify-content-between align-items-center">
-        <textarea v-model="userComment"></textarea>
+        <textarea v-model="userComment" class="form-control"></textarea>
         <button @click="saveEdit" class="btn save-btn">Save</button>
       </div>
     </div>
@@ -61,6 +61,15 @@ export default {
 </script>
 
 <style scoped>
+  input {
+    margin-left: -0.4rem;
+    width: 5rem;
+  }
+
+  textarea {
+    width: 80%;
+  }
+
   .save-btn {
     background-color: var(--primary-color);
     color: white;

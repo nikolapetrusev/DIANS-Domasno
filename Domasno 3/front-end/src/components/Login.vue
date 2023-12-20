@@ -64,6 +64,7 @@ export default {
         const data = await response.json();
         sessionStorage.setItem("access", data.access);
         sessionStorage.setItem("refresh", data.refresh);
+        sessionStorage.setItem("loggedIn", "true")
 
         mutations.setLoggedIn(true)
         await router.push("/")

@@ -28,7 +28,7 @@ export default {
     WineryInfo,
     CommentBox,
     AddComment
-  }
+  },
 }
 </script>
 

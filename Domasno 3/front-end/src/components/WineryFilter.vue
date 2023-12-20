@@ -61,7 +61,7 @@ export default {
       mutations.setSelectedRating(0);
     },
     clearCity() {
-      mutations.setSelectedCity(0)
+      mutations.setSelectedCity(null)
     }
   }
 }
@@ -148,13 +148,6 @@ export default {
     border-radius: 8px;
     background-color: var(--primary-color);
   }
-
-  /*@media only screen and (max-width: 1200px) {*/
-  /*  .ratingFilter {*/
-  /*    flex-direction: column;*/
-  /*    align-items: center;*/
-  /*  }*/
-  /*}*/
 
   .error-message {
     position: fixed;

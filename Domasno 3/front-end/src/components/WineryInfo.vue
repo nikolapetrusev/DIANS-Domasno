@@ -3,7 +3,8 @@
     <div class="d-flex justify-content-start align-items-center gap-5">
       <div class="d-flex align-items-center justify-content-start gap-3">
         <h2>{{ selectedWinery.name }}</h2>
-        <i class="heart fas fa-heart" @click="addToFavorites" :class="{'hide' : !userLoggedIn}"></i>
+        <i class="visitedLocation fas fa-map-marker-alt" @click="addToVisited" :class="{'active': isVisited, 'hide' : !userLoggedIn}"></i>
+        <i class="heart fas fa-heart" @click="addToFavorites" :class="{'active': isFavorite, 'hide' : !userLoggedIn}"></i>
       </div>
       <div class="d-flex align-items-center">
         <i class="fas fa-star mx-2 fa-xs"></i>
@@ -22,6 +23,12 @@
 import { store } from '@/store/store.js'
 export default {
   name: "WineryInfo",
+  data() {
+    return {
+      isFavorite: false,
+      isVisited: false,
+    }
+  },
   computed: {
     userLoggedIn() {
       return sessionStorage.getItem("loggedIn") === "true"
@@ -31,12 +38,14 @@ export default {
       return JSON.parse(storedWinery);
     }
   },
+  created() {
+    this.initializeFavoriteStatus();
+    this.initializeVisitedStatus()
+  },
   methods: {
     async addToFavorites() {
-      const heartIcon = document.querySelector('.heart');
-      if (heartIcon) {
-        heartIcon.classList.toggle('active');
-      }
+      this.isFavorite = !this.isFavorite;
+      sessionStorage.setItem(`isFavorite_${this.selectedWinery.id}`, JSON.stringify(this.isFavorite));
 
       const requestOptions = {
         method: "POST",
@@ -44,7 +53,54 @@ export default {
         body: JSON.stringify({"winery_id":this.selectedWinery.id})
       };
       await fetch(store.api_url + "/profiles/favorites/", requestOptions);
-    }
+    },
+    async addToVisited() {
+      this.isVisited = !this.isVisited;
+      sessionStorage.setItem(`isVisited_${this.selectedWinery.id}`, JSON.stringify(this.isVisited));
+
+      const requestOptions = {
+        method: "POST",
+        headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")},
+        body: JSON.stringify({"winery_id":this.selectedWinery.id})
+      };
+      await fetch(store.api_url + "/profiles/visited/", requestOptions);
+    },
+    async initializeFavoriteStatus() {
+      const storedIsFavorite = sessionStorage.getItem(`isFavorite_${this.selectedWinery.id}`);
+
+      if(storedIsFavorite !== null) {
+        this.isFavorite = JSON.parse(storedIsFavorite)
+      } else {
+        const requestOptions = {
+          method: "GET",
+          headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")}
+        };
+        const response = await fetch(store.api_url + "/profiles/favorites/", requestOptions);
+        let favorites = await response.json();
+        favorites = JSON.parse(JSON.stringify(favorites))["favorites"]
+
+        this.isFavorite = favorites.includes(this.selectedWinery.id);
+        sessionStorage.setItem(`isFavorite_${this.selectedWinery.id}`, JSON.stringify(this.isFavorite));
+      }
+    },
+    async initializeVisitedStatus() {
+      const storedIsVisited = sessionStorage.getItem(`isVisited_${this.selectedWinery.id}`);
+
+      if(storedIsVisited !== null) {
+        this.isVisited = JSON.parse(storedIsVisited)
+      } else {
+        const requestOptions = {
+          method: "GET",
+          headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")}
+        };
+        const response = await fetch(store.api_url + "/profiles/visited/", requestOptions);
+        let visited = await response.json();
+        visited = JSON.parse(JSON.stringify(visited))["visited"]
+
+        this.isVisited = visited.includes(this.selectedWinery.id);
+        sessionStorage.setItem(`isVisited_${this.selectedWinery.id}`, JSON.stringify(this.isVisited));
+      }
+    },
   }
 }
 </script>
@@ -55,7 +111,7 @@ export default {
     height: 18rem;
   }
 
-  .heart {
+  .heart, .visitedLocation {
     font-size: 25px;
     color: darkgray;
   }

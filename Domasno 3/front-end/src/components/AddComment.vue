@@ -81,18 +81,9 @@ export default {
 
       const response = await fetch(store.api_url + "/profiles/reviews/", requestOptions);
 
-      console.log(this.comment)
-      console.log(selectedRating)
-      console.log(response.status)
       if(response.status === 201) {
-        await router.go(0)}
-      // } else {
-      //   this.showErrorMessage = true
-      //   this.errorMessage = "Please fill out all fields"
-      //   setTimeout(() => {
-      //     this.showErrorMessage = false;
-      //   }, 3000);
-      // }
+        await router.go(0)
+      }
     },
     getSelectedRating() {
       const checkedRating = document.querySelector('.rating input:checked');
