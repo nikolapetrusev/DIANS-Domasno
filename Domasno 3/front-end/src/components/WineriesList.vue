@@ -102,7 +102,6 @@ export default {
       this.favorites = await response.json();
 
       this.favorites = JSON.parse(JSON.stringify(this.favorites))["favorites"]
-      sessionStorage.setItem("favorites", this.favorites)
     },
     async showVisited() {
       const visitedLocationIcon = document.querySelector('.visitedLocation');
@@ -122,7 +121,6 @@ export default {
       console.log(this.visited)
 
       this.visited = JSON.parse(JSON.stringify(this.visited))["visited"]
-      sessionStorage.setItem("visited", this.visited)
     },
     getWineryPage(winery) {
       mutations.setSelectedWinery(winery);

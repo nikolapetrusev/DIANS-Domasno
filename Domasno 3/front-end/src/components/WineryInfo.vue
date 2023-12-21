@@ -66,39 +66,43 @@ export default {
       await fetch(store.api_url + "/profiles/visited/", requestOptions);
     },
     async initializeFavoriteStatus() {
-      const storedIsFavorite = sessionStorage.getItem(`isFavorite_${this.selectedWinery.id}`);
+      if(this.userLoggedIn) {
+        const storedIsFavorite = sessionStorage.getItem(`isFavorite_${this.selectedWinery.id}`);
 
-      if(storedIsFavorite !== null) {
-        this.isFavorite = JSON.parse(storedIsFavorite)
-      } else {
-        const requestOptions = {
-          method: "GET",
-          headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")}
-        };
-        const response = await fetch(store.api_url + "/profiles/favorites/", requestOptions);
-        let favorites = await response.json();
-        favorites = JSON.parse(JSON.stringify(favorites))["favorites"]
+        if(storedIsFavorite !== null) {
+          this.isFavorite = JSON.parse(storedIsFavorite)
+        } else {
+          const requestOptions = {
+            method: "GET",
+            headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")}
+          };
+          const response = await fetch(store.api_url + "/profiles/favorites/", requestOptions);
+          let favorites = await response.json();
+          favorites = JSON.parse(JSON.stringify(favorites))["favorites"]
 
-        this.isFavorite = favorites.includes(this.selectedWinery.id);
-        sessionStorage.setItem(`isFavorite_${this.selectedWinery.id}`, JSON.stringify(this.isFavorite));
+          this.isFavorite = favorites.includes(this.selectedWinery.id);
+          sessionStorage.setItem(`isFavorite_${this.selectedWinery.id}`, JSON.stringify(this.isFavorite));
+        }
       }
     },
     async initializeVisitedStatus() {
-      const storedIsVisited = sessionStorage.getItem(`isVisited_${this.selectedWinery.id}`);
+      if(this.userLoggedIn) {
+        const storedIsVisited = sessionStorage.getItem(`isVisited_${this.selectedWinery.id}`);
 
-      if(storedIsVisited !== null) {
-        this.isVisited = JSON.parse(storedIsVisited)
-      } else {
-        const requestOptions = {
-          method: "GET",
-          headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")}
-        };
-        const response = await fetch(store.api_url + "/profiles/visited/", requestOptions);
-        let visited = await response.json();
-        visited = JSON.parse(JSON.stringify(visited))["visited"]
+        if(storedIsVisited !== null) {
+          this.isVisited = JSON.parse(storedIsVisited)
+        } else {
+          const requestOptions = {
+            method: "GET",
+            headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")}
+          };
+          const response = await fetch(store.api_url + "/profiles/visited/", requestOptions);
+          let visited = await response.json();
+          visited = JSON.parse(JSON.stringify(visited))["visited"]
 
-        this.isVisited = visited.includes(this.selectedWinery.id);
-        sessionStorage.setItem(`isVisited_${this.selectedWinery.id}`, JSON.stringify(this.isVisited));
+          this.isVisited = visited.includes(this.selectedWinery.id);
+          sessionStorage.setItem(`isVisited_${this.selectedWinery.id}`, JSON.stringify(this.isVisited));
+        }
       }
     },
   }
