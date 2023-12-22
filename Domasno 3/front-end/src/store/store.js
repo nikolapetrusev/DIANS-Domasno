@@ -6,7 +6,7 @@ export const store = reactive({
     selectedRating: 0,
     favoriteClicked: false,
     visitedClicked: false,
-    api_url: "http://127.0.0.1:8000",
+    api_url: "http://209.38.204.145:8000",
     wineries: Array,
     cities: "",
     loggedIn: false,

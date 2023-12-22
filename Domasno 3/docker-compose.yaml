@@ -3,26 +3,12 @@ version: '3.8'
 services:
   back-end:
     container_name: vino-back-end
-    build: ./back-end
+    image: nikolapetrusev/dians-backend:0.2.1
     command: gunicorn project.wsgi:application --bind 0.0.0.0:8000
     ports:
       - 8000:8000
     env_file:
-      - ./back-end/.env.prod
-    depends_on:
-      - back-end-setup
-  
-  back-end-setup:
-    build: ./back-end
-    command:
-      - /bin/sh
-      - -c
-      - |
-        python manage.py makemigrations --no-input
-        python manage.py migrate --no-input
-        python manage.py createsuperuser --no-input
-    env_file:
-      - ./back-end/.env.prod
+      - .env.prod
     depends_on:
       - db
 
@@ -34,11 +20,11 @@ services:
     ports:
       - 5432:5432
     env_file:
-      - ./back-end/.env.prod.db
+      - .env.prod.db
   
   front-end:
     container_name: vino-front-end
-    build: ./front-end
+    image: nikolapetrusev/dians-frontend:0.2.2
     ports:
       - 8080:8080
     depends_on:
