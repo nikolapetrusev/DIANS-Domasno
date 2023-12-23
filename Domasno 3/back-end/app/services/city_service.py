@@ -14,8 +14,7 @@ class CityService:
 
     @staticmethod
     def get_all_cities() -> dict[str, list[City]]:
-        cities = obj if (obj := City.objects.filter().all()) else []
-        if cities := City.objects.all():
+        if cities := City.objects.all().order_by("name"):
             return {"data": CitySerializer(cities, many=True).data}
         return {"data": []}
 

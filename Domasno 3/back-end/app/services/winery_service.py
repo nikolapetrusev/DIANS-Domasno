@@ -14,14 +14,14 @@ class WineryService:
 
     @staticmethod
     def get_wineries_by_city(city_id: int) -> dict[str, list[Winery]]:
-        if wineries := Winery.objects.filter(city__pk=city_id):
+        if wineries := Winery.objects.filter(city__pk=city_id).order_by("name"):
             return {"wineries": WinerySerializer(wineries, many=True).data}
         else:
             return {"wineries": []}
 
     @staticmethod
     def get_all_wineries() -> dict[str, list[Winery]]:
-        if wineries := Winery.objects.all():
+        if wineries := Winery.objects.order_by("name"):
             return {"wineries": WinerySerializer(wineries, many=True).data}
         return {"wineries": []}
 
