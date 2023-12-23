@@ -14,7 +14,7 @@
     </div>
     <div class="scrollbar">
       <div v-for="winery in filteredWineries" :key="winery.id">
-        <button class="btn btn-link" type="submit" @click="getWineryPage(winery)">{{ winery.name }}</button>
+        <button class="btn btn-link" type="submit" @click="getWineryPage(winery)">{{ winery.name }} <span>({{ winery.rating }}☆)</span></button>
       </div>
     </div>
   </div>
@@ -118,8 +118,6 @@ export default {
       const response = await fetch(store.api_url + "/profiles/visited/", requestOptions);
       this.visited = await response.json();
 
-      console.log(this.visited)
-
       this.visited = JSON.parse(JSON.stringify(this.visited))["visited"]
     },
     getWineryPage(winery) {
@@ -181,5 +179,10 @@ export default {
 
   .hide{
     visibility: hidden;
+  }
+
+  span {
+    font-size: .9rem;
+    color: var(--primary-color);
   }
 </style>

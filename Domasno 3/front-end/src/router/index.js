@@ -7,6 +7,8 @@ const routes = [
     name: 'home',
     component: () => import('../components/HomePage'),
     beforeEnter: async (to, from, next) => {
+      document.title = "VinoVodic"
+
       const response1 = await fetch(store.api_url + "/wineries");
       let wineries = await response1.json();
       wineries = JSON.parse(JSON.stringify(wineries))["wineries"];
@@ -41,6 +43,8 @@ const routes = [
     name: 'winery',
     component: () => import('../components/Winery'),
     beforeEnter: async (to, from, next) => {
+      document.title = "VinoVodic"
+
       const response = await fetch(store.api_url + "/wineries");
       let wineries = await response.json();
       wineries = JSON.parse(JSON.stringify(wineries))["wineries"];
@@ -66,18 +70,29 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../components/Login')
+    component: () => import('../components/Login'),
+    beforeEnter: async (to, from, next) => {
+      document.title = "VinoVodic"
+
+      next()
+    }
   },
   {
     path: '/register',
     name: 'register',
-    component: () => import('../components/Register')
+    component: () => import('../components/Register'),
+    beforeEnter: async (to, from, next) => {
+      document.title = "VinoVodic"
+
+      next()
+    }
   },
   {
     path: '/profile',
     name: 'profile',
     component: () => import('../components/ProfilePage'),
     beforeEnter: async (to, from, next) => {
+      document.title = "VinoVodic"
 
       if(sessionStorage.getItem("access")!==null) {
         sessionStorage.setItem("loggedIn", "true")
