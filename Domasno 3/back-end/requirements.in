@@ -5,5 +5,6 @@ djangorestframework-simplejwt
 gunicorn
 whitenoise
 # ne treba za docker
-python-dotenv
+# python-dotenv
 django-cors-headers
+injector

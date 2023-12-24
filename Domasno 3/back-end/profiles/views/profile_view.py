@@ -1,5 +1,6 @@
 import json
 from typing import Any
+from injector import Injector
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -15,7 +16,9 @@ class ProfileView(APIView):
     # View can only be accessed if user is authenticated
     permission_classes = (IsAuthenticated,)
     # Necessary services
-    user_service = UserService()
+    injector = Injector()
+    user_service = injector.get(UserService)
+    # user_service = UserService()
 
     def get(self, request, format=None) -> Response:
         """
@@ -25,7 +28,7 @@ class ProfileView(APIView):
         """
         data: dict[str, Any] = {}
 
-        user = self.user_service.get_user(request.user)
+        user = self.user_service.execute.get_user(request.user)
         data["user"] = ProfileUserSerializer(user).data
 
         return Response(data, status=status.HTTP_200_OK)
@@ -41,7 +44,7 @@ class ProfileView(APIView):
         data = json.loads(request.body.decode("utf-8"))
 
         try:
-            self.user_service.update_user(request.user, data)
+            self.user_service.execute.update_user(request.user, data)
         except PasswordsDontMatchError as err:
             return Response(
                 data={"data": str(err)}, status=status.HTTP_406_NOT_ACCEPTABLE

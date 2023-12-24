@@ -1,5 +1,7 @@
 import json
 from typing import Any
+from injector import Injector
+# from profiles.injector import Injector
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -7,13 +9,16 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from profiles.services import UserService
-
+from profiles.modules import UserServiceModule
+from profiles.services.interfaces import IUserService
 
 class FavoritesView(APIView):
     # View can only be accessed if user is authenticated
     permission_classes = (IsAuthenticated,)
     # Necessary services
-    user_service = UserService()
+    injector = Injector(UserServiceModule)
+    user_service = injector.get(IUserService)
+    # user_service = UserService()
 
     def get(self, request, format=None) -> Response:
         """

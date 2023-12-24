@@ -1,5 +1,6 @@
 import json
 from typing import Any
+from injector import Injector
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -13,7 +14,9 @@ class VisitedView(APIView):
     # View can only be accessed if user is authenticated
     permission_classes = (IsAuthenticated,)
     # Necessary services
-    user_service = UserService()
+    injector = Injector()
+    user_service = injector.get(UserService)
+    # user_service = UserService()
 
     def get(self, request, format=None) -> Response:
         """
@@ -24,7 +27,7 @@ class VisitedView(APIView):
             data: dict[str, Any]
         """
         data: dict[str, Any] = {}
-        data["visited"] = self.user_service.get_visited(request.user)
+        data["visited"] = self.user_service.execute.get_visited(request.user)
 
         return Response(data, status=status.HTTP_200_OK)
 
@@ -38,6 +41,6 @@ class VisitedView(APIView):
             status 200 OK
         """
         data = json.loads(request.body.decode("utf-8"))
-        self.user_service.add_visited(request.user, data)
+        self.user_service.execute.add_visited(request.user, data)
 
         return Response(status=status.HTTP_202_ACCEPTED)
