@@ -1,9 +1,11 @@
 from typing import Any
+
+from metaclasses import SingletonMeta
+
 from app.models import Winery
 from app.serializers import WinerySerializer
-from app.exceptions import WineryNotFoundError
 from app.repositories import WineryRepository
-from metaclasses import SingletonMeta
+from app.exceptions import WineryNotFoundError
 
 
 class WineryService(metaclass=SingletonMeta):

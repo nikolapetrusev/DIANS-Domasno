@@ -6,13 +6,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from profiles.serializers import ProfileUserSerializer
 from profiles.services import UserService
+from profiles.serializers import ProfileUserSerializer
 from profiles.exceptions import PasswordsDontMatchError
 
 
 class ProfileView(APIView):
+    # View can only be accessed if user is authenticated
     permission_classes = (IsAuthenticated,)
+    # Necessary services
+    user_service = UserService()
 
     def get(self, request, format=None) -> Response:
         """
@@ -22,8 +25,7 @@ class ProfileView(APIView):
         """
         data: dict[str, Any] = {}
 
-        user = UserService.get_user(request.user)
-        # data["user"] = UserSerializer(user).data
+        user = self.user_service.get_user(request.user)
         data["user"] = ProfileUserSerializer(user).data
 
         return Response(data, status=status.HTTP_200_OK)
@@ -36,11 +38,10 @@ class ProfileView(APIView):
             rating: int
             comment: str | None
         """
-        user = UserService.get_user(request.user)
         data = json.loads(request.body.decode("utf-8"))
 
         try:
-            UserService.update_user(user, data)
+            self.user_service.update_user(request.user, data)
         except PasswordsDontMatchError as err:
             return Response(
                 data={"data": str(err)}, status=status.HTTP_406_NOT_ACCEPTABLE

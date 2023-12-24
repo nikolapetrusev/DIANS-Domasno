@@ -6,11 +6,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from profiles.services import UserService, FavoritesService
+from profiles.services import UserService
 
 
 class FavoritesView(APIView):
+    # View can only be accessed if user is authenticated
     permission_classes = (IsAuthenticated,)
+    # Necessary services
+    user_service = UserService()
 
     def get(self, request, format=None) -> Response:
         """
@@ -20,10 +23,8 @@ class FavoritesView(APIView):
         Returns:
             data: dict[str, Any]
         """
-        user = UserService.get_user(request.user)
-
         data: dict[str, Any] = {}
-        data["favorites"] = FavoritesService.get_favorite(user)
+        data["favorites"] = self.user_service.get_favorites(request.user)
 
         return Response(data, status=status.HTTP_200_OK)
 
@@ -36,11 +37,7 @@ class FavoritesView(APIView):
         Returns:
             status 200 OK
         """
-        user = UserService.get_user(request.user)
-
-        # w_id = request.POST["winery_id"]
         data = json.loads(request.body.decode("utf-8"))
-
-        FavoritesService.add_favorite(user, data)
+        self.user_service.add_favorite(request.user, data)
 
         return Response(status=status.HTTP_202_ACCEPTED)

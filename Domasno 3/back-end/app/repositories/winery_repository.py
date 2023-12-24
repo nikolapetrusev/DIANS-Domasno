@@ -1,6 +1,6 @@
 from app.models import Winery
 
-# TODO dali treba tuka da e order_ by ili u service (so lambda ke treba u service)
+
 class WineryRepository:
     def get_winery_by_id(winery_id: int) -> Winery | None:
         if winery := Winery.objects.get(pk=winery_id):
