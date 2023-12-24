@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from profiles.injector import injector
 from profiles.services import UserService
 from profiles.serializers import ProfileUserSerializer
 from profiles.exceptions import PasswordsDontMatchError
@@ -15,7 +16,8 @@ class ProfileView(APIView):
     # View can only be accessed if user is authenticated
     permission_classes = (IsAuthenticated,)
     # Necessary services
-    user_service = UserService()
+    user_service = injector.get(UserService)
+    # user_service = UserService()
 
     def get(self, request, format=None) -> Response:
         """

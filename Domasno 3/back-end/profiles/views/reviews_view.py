@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from profiles.injector import injector
 from profiles.services import UserService, ReviewService
 from profiles.exceptions import InvalidInputError, UserHasNoPermission
 
@@ -13,8 +14,8 @@ class ReviewsView(APIView):
     # View can only be accessed if user is authenticated
     permission_classes = (IsAuthenticated,)
     # Necessary services
-    user_service = UserService()
-    review_service = ReviewService()
+    user_service = injector.get(UserService)
+    review_service = injector.get(ReviewService)
 
     def post(self, request, format=None) -> Response:
         """

@@ -5,6 +5,7 @@ from app.models import Review
 
 class ReviewRepository:
     def create_review(
+        self,
         user: User,
         winery_id: int,
         rating: int,
@@ -18,10 +19,10 @@ class ReviewRepository:
         )
         review.save()
 
-    def get_review_by_id(review_id: int) -> Review | None:
+    def get_review_by_id(self, review_id: int) -> Review | None:
         if review := Review.objects.get(pk=review_id):
             return review
 
-    def delete_review(review_id: int) -> None:
+    def delete_review(self, review_id: int) -> None:
         review = Review.objects.get(pk=review_id)
         review.delete()

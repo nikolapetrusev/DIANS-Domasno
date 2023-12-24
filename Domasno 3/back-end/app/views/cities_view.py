@@ -2,12 +2,14 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from app.injector import injector
 from app.services import CityService
 from app.exceptions import CityNotFoundError
 
 
 class CitiesView(APIView):
-    city_service = CityService()
+    # Necessary services
+    city_service = injector.get(CityService)
 
     def get(self, request, format=None) -> Response:
         """

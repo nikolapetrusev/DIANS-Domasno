@@ -2,12 +2,14 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from app.injector import injector
 from app.services import WineryService
 from app.exceptions import WineryNotFoundError
 
 
 class WineriesView(APIView):
-    winery_service = WineryService()
+    # Necessary services
+    winery_service = injector.get(WineryService)
 
     def get(self, request, format=None) -> Response:
         """

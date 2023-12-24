@@ -1,36 +1,15 @@
 from typing import Any
 
+
 from django.contrib.auth.models import User
 
-from metaclasses import SingletonMeta
 
-from app.serializers import ReviewSerializer
-from profiles.repositories import ReviewRepository
-from profiles.exceptions import InvalidInputError, UserHasNoPermission
-
-
-class ReviewService(metaclass=SingletonMeta):
-    review_repository = ReviewRepository
-
+class ReviewService:
     def create_review(self, user: User, data: dict[str, Any]) -> None:
-        self.review_repository.create_review(
-            user,
-            data["winery_id"],
-            data["rating"],
-            data.get("comment", None),
-        )
+        raise NotImplementedError
 
     def edit_review(self, user: User, data: dict[str, Any]) -> None:
-        review = self.review_repository.get_review_by_id(data["review_id"])
-        serializer = ReviewSerializer(review, data=data)
-
-        if review.user != user:
-            raise UserHasNoPermission(user.username, "ReviewService.edit_review()")
-
-        if serializer.is_valid():
-            serializer.save(user=user)
-        else:
-            raise InvalidInputError("ReviewService.edit_review()")
+        raise NotImplementedError
 
     def delete_review(self, data: dict[str, Any]) -> None:
-        self.review_repository.delete_review(data["review_id"])
+        raise NotImplementedError
