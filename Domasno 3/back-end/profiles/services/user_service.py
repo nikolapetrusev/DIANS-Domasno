@@ -2,16 +2,25 @@ from typing import Any
 
 from django.contrib.auth.models import User
 
+from metaclasses import SingletonMeta
+
+from app.serializers import WinerySerializer
+from app.repositories import WineryRepository
+from profiles.repositories import UserRepository
 from profiles.exceptions import PasswordsDontMatchError
 
 
-class UserService:
-    @staticmethod
-    def get_user(username: str) -> User:
-        return User.objects.get(username=username)
+# TODO dokumentacija
+class UserService(metaclass=SingletonMeta):
+    user_repository = UserRepository()
+    winery_repository = WineryRepository()
 
-    @staticmethod
-    def update_user(user: User, data: dict[str, Any]) -> None:
+    def get_user(self, username: str) -> User:
+        return self.user_repository.get_user(username)
+
+    def update_user(self, username: str, data: dict[str, Any]) -> None:
+        user = self.user_repository.get_user(username)
+
         if tmp := data.get("first_name", None):
             user.first_name = tmp
         if tmp := data.get("last_name", None):
@@ -28,3 +37,25 @@ class UserService:
             raise PasswordsDontMatchError()
 
         user.save()
+
+    def get_favorites(self, username: str) -> dict[str, Any]:
+        user = self.user_repository.get_user(username)
+        favorites = self.user_repository.get_favorites(user)
+
+        return WinerySerializer(favorites, many=True).data
+
+    def add_favorite(self, username: str, data: dict[str, Any]) -> None:
+        user = self.user_repository.get_user(username)
+        winery = self.winery_repository.get_winery_by_id(data["winery_id"])
+        self.user_repository.add_favorite(user, winery)
+
+    def get_visited(self, username: str) -> dict[str, Any]:
+        user = self.user_repository.get_user(username)
+        visited = self.user_repository.get_visited(user)
+
+        return WinerySerializer(visited, many=True).data
+
+    def add_visited(self, username: str, data: dict[str, Any]) -> None:
+        user = self.user_repository.get_user(username)
+        winery = self.winery_repository.get_winery_by_id(data["winery_id"])
+        self.user_repository.add_visited(user, winery)

@@ -7,6 +7,8 @@ from app.exceptions import WineryNotFoundError
 
 
 class WineriesView(APIView):
+    winery_service = WineryService()
+
     def get(self, request, format=None) -> Response:
         """
         Returns wineries by parameter. Only one parameter can be active at a time.
@@ -20,7 +22,7 @@ class WineriesView(APIView):
         """
         try:
             return Response(
-                WineryService.get_wineries(request.GET), status=status.HTTP_200_OK
+                self.winery_service.get_wineries(request.GET), status=status.HTTP_200_OK
             )
         except WineryNotFoundError as err:
             return Response(data={"data": str(err)}, status=status.HTTP_404_NOT_FOUND)

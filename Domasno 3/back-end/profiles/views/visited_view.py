@@ -6,11 +6,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from profiles.services import UserService, VisitedService
+from profiles.services import UserService
 
 
 class VisitedView(APIView):
+    # View can only be accessed if user is authenticated
     permission_classes = (IsAuthenticated,)
+    # Necessary services
+    user_service = UserService()
 
     def get(self, request, format=None) -> Response:
         """
@@ -20,10 +23,8 @@ class VisitedView(APIView):
         Returns:
             data: dict[str, Any]
         """
-        user = UserService.get_user(request.user)
-
         data: dict[str, Any] = {}
-        data["visited"] = VisitedService.get_visited(user)
+        data["visited"] = self.user_service.get_visited(request.user)
 
         return Response(data, status=status.HTTP_200_OK)
 
@@ -36,10 +37,7 @@ class VisitedView(APIView):
         Returns:
             status 200 OK
         """
-        user = UserService.get_user(request.user)
-
         data = json.loads(request.body.decode("utf-8"))
-
-        VisitedService.add_visited(user, data)
+        self.user_service.add_visited(request.user, data)
 
         return Response(status=status.HTTP_202_ACCEPTED)

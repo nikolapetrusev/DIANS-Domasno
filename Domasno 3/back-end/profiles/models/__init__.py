@@ -1,1 +1,1 @@
-from .extended_user import ExtendedUser
+from .extended_user import ExtendedUser  # noqa: F401
