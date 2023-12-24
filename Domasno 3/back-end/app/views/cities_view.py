@@ -7,6 +7,8 @@ from app.exceptions import CityNotFoundError
 
 
 class CitiesView(APIView):
+    city_service = CityService()
+
     def get(self, request, format=None) -> Response:
         """
         Returns cities by parameter. If no parameters are specified, returns all cities.
@@ -18,7 +20,7 @@ class CitiesView(APIView):
         """
         try:
             return Response(
-                CityService.get_cities(request.GET), status=status.HTTP_200_OK
+                self.city_service.get_cities(request.GET), status=status.HTTP_200_OK
             )
         except CityNotFoundError as err:
             return Response(data={"data": str(err)}, status=status.HTTP_404_NOT_FOUND)
