@@ -15,7 +15,3 @@ class ReviewSerializer(serializers.ModelSerializer):
             "rating",
             "comment",
         ]
-
-        def get_validation_exclusions(self):
-            exclusions = super(ReviewSerializer, self).get_validation_exclusions()
-            return exclusions + ["user"]
