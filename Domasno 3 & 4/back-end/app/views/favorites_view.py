@@ -6,11 +6,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from profiles.injector import injector
-from profiles.services import UserService
+from app.injector import injector
+from app.services import UserService
 
 
-class VisitedView(APIView):
+class FavoritesView(APIView):
     # View can only be accessed if user is authenticated
     permission_classes = (IsAuthenticated,)
     # Necessary services
@@ -18,20 +18,20 @@ class VisitedView(APIView):
 
     def get(self, request, format=None) -> Response:
         """
-        Get visited wineries.
+        Get favorite wineries.
         Parameters:
             N/A
         Returns:
             data: dict[str, Any]
         """
         data: dict[str, Any] = {}
-        data["visited"] = self.user_service.get_visited(request.user)
+        data["favorites"] = self.user_service.get_favorites(request.user)
 
         return Response(data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None) -> Response:
         """
-        Add winery to visited.
+        Add winery to favorites.
 
         Parameters:
             winery_id: int
@@ -39,6 +39,6 @@ class VisitedView(APIView):
             status 200 OK
         """
         data = json.loads(request.body.decode("utf-8"))
-        self.user_service.add_visited(request.user, data)
+        self.user_service.add_favorite(request.user, data)
 
         return Response(status=status.HTTP_202_ACCEPTED)

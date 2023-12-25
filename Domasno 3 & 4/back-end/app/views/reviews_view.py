@@ -5,9 +5,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from profiles.injector import injector
-from profiles.services import UserService, ReviewService
-from profiles.exceptions import InvalidInputError, UserHasNoPermission
+from app.injector import injector
+from app.services import UserService, ReviewService
+from app.exceptions import InvalidInputError, UserHasNoPermission
 
 
 class ReviewsView(APIView):
