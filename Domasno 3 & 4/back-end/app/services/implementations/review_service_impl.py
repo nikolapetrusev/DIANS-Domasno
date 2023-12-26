@@ -4,10 +4,10 @@ from django.contrib.auth.models import User
 
 from metaclasses import SingletonMeta
 
-from profiles.services import ReviewService
+from app.services import ReviewService
 from app.serializers import ReviewSerializer
-from profiles.repositories import ReviewRepository
-from profiles.exceptions import InvalidInputError, UserHasNoPermission
+from app.repositories import ReviewRepository
+from app.exceptions import InvalidInputError, UserHasNoPermission
 
 
 class ReviewServiceImpl(ReviewService, metaclass=SingletonMeta):

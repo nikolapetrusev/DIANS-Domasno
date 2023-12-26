@@ -22,7 +22,6 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "app.apps.AppConfig",
-    "profiles.apps.ProfilesConfig",
     "rest_framework",
     "django.contrib.admin",
     "django.contrib.auth",

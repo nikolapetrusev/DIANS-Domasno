@@ -4,11 +4,11 @@ from django.contrib.auth.models import User
 
 from metaclasses import SingletonMeta
 
-from profiles.services import UserService
+from app.services import UserService
 from app.serializers import WinerySerializer
 from app.repositories import WineryRepository
-from profiles.repositories import UserRepository
-from profiles.exceptions import PasswordsDontMatchError
+from app.repositories import UserRepository
+from app.exceptions import PasswordsDontMatchError
 
 
 class UserServiceImpl(UserService, metaclass=SingletonMeta):

@@ -6,10 +6,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from profiles.injector import injector
-from profiles.services import UserService
-from profiles.serializers import ProfileUserSerializer
-from profiles.exceptions import PasswordsDontMatchError
+from app.injector import injector
+from app.services import UserService
+from app.serializers import ProfileUserSerializer
+from app.exceptions import PasswordsDontMatchError
 
 
 class ProfileView(APIView):

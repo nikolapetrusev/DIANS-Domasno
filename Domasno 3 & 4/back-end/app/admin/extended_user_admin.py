@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from profiles.models import ExtendedUser
+from app.models import ExtendedUser
 
 
 class ExtendedUserAdmin(admin.StackedInline):
