@@ -14,21 +14,23 @@ class CityTest(TestCase):
 
         CityModelFactory.create_batch(5)
 
-    def test_wineries_endpoint_returns_json(self):
-        url = reverse('app-cities')
+    def test_get_cities(self) -> None:
+        url = reverse("app-cities")
         response = self.client.get(url)
-        
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.accepted_media_type, 'application/json')
+        self.assertEqual(response.accepted_media_type, "application/json")
 
-
-    def test_wineries_with_winery_id_parameter_returns_json(self):
-        url = reverse('app-cities')
-        city_id = 1   # Must be smaller than batch_size
+    def test_get_cities_with_city_id_parameter(self) -> None:
+        url = reverse("app-cities")
+        city_id = 1  # Must be smaller than batch_size
         response = self.client.get(f"{url}?city_id={city_id}")
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.accepted_media_type, 'application/json')
 
-        city = json.loads(response.content)["city"]
-        self.assertEqual(city['id'], city_id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.accepted_media_type, "application/json")
+
+        city = json.loads(response.content)
+        self.assertIn("city", city)
+        
+        city = city["city"]
+        self.assertEqual(city["id"], city_id)
