@@ -3,8 +3,8 @@
     <div class="d-flex justify-content-start align-items-center gap-5">
       <div class="d-flex align-items-center justify-content-start gap-3">
         <h2>{{ selectedWinery.name }}</h2>
-        <i class="visitedLocation fas fa-map-marker-alt" @click="addToVisited" :class="{'active': isVisited, 'hide' : !userLoggedIn}"></i>
-        <i class="heart fas fa-heart" @click="addToFavorites" :class="{'active': isFavorite, 'hide' : !userLoggedIn}"></i>
+        <i class="visitedLocation fas fa-map-marker-alt" @click="clickedVisited" :class="{'active': isVisited, 'hide' : !userLoggedIn}"></i>
+        <i class="heart fas fa-heart" @click="clickedFavorite" :class="{'active': isFavorite, 'hide' : !userLoggedIn}"></i>
       </div>
       <div class="d-flex align-items-center">
         <i class="fas fa-star mx-2 fa-xs"></i>
@@ -43,10 +43,18 @@ export default {
     this.initializeVisitedStatus()
   },
   methods: {
-    async addToFavorites() {
+    async clickedFavorite() {
       this.isFavorite = !this.isFavorite;
       sessionStorage.setItem(`isFavorite_${this.selectedWinery.id}`, JSON.stringify(this.isFavorite));
 
+      if(this.isFavorite) {
+        this.addToFavorites();
+      } else {
+        this.removeFromFavorites();
+      }
+    },
+
+    async addToFavorites() {
       const requestOptions = {
         method: "POST",
         headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")},
@@ -54,10 +62,28 @@ export default {
       };
       await fetch(store.api_url + "/profiles/favorites/", requestOptions);
     },
-    async addToVisited() {
+
+    async removeFromFavorites() {
+      const requestOptions = {
+        method: "DELETE",
+        headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")},
+        body: JSON.stringify({"winery_id":this.selectedWinery.id})
+      };
+      await fetch(store.api_url + "/profiles/favorites/", requestOptions);
+    },
+
+    async clickedVisited() {
       this.isVisited = !this.isVisited;
       sessionStorage.setItem(`isVisited_${this.selectedWinery.id}`, JSON.stringify(this.isVisited));
 
+      if(this.isVisited) {
+        this.addToVisited();
+      } else {
+        this.removeFromVisited();
+      }
+    },
+
+    async addToVisited() {
       const requestOptions = {
         method: "POST",
         headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")},
@@ -65,6 +91,16 @@ export default {
       };
       await fetch(store.api_url + "/profiles/visited/", requestOptions);
     },
+
+    async removeFromVisited() {
+      const requestOptions = {
+        method: "DELETE",
+        headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")},
+        body: JSON.stringify({"winery_id":this.selectedWinery.id})
+      };
+      await fetch(store.api_url + "/profiles/visited/", requestOptions);
+    },
+
     async initializeFavoriteStatus() {
       if(this.userLoggedIn) {
         const storedIsFavorite = sessionStorage.getItem(`isFavorite_${this.selectedWinery.id}`);
