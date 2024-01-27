@@ -4,10 +4,10 @@
     <button class="btn" @click="deleteComment"><i class="fas fa-trash"></i></button>
   </div>
   <div v-if="!isEditing">
-    <CommentCard :username="username" :comment="comment" :rating="rating"></CommentCard>
+    <CommentCard :comment="comment" :rating="rating" :username="username"></CommentCard>
   </div>
   <div v-else>
-    <EditableComment :username="username" :comment="comment" :rating="rating" :id="id"></EditableComment>
+    <EditableComment :id="id" :comment="comment" :rating="rating" :username="username"></EditableComment>
   </div>
 </template>
 
@@ -16,9 +16,13 @@ import CommentCard from "@/components/CommentCard";
 import EditableComment from "@/components/EditableComment";
 import router from "@/router";
 import {store} from "@/store/store";
+
 export default {
   name: "ProfileComment",
-  components: {EditableComment, CommentCard },
+  components: {
+    EditableComment,
+    CommentCard
+  },
   data() {
     return {
       isEditing: false,
@@ -48,17 +52,17 @@ export default {
       await fetch(store.api_url + "/profiles/reviews/", requestOptions);
 
       router.go(0)
-    },
+    }
   }
 }
 </script>
 
 <style scoped>
-  .card {
-    background-color: white;
-  }
+.card {
+  background-color: white;
+}
 
-  i {
-    color: var(--primary-color);
-  }
+i {
+  color: var(--primary-color);
+}
 </style>

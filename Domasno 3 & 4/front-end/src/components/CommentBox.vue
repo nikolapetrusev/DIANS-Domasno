@@ -5,7 +5,11 @@
       <div class="outer-card card shadow-0 border" style="background-color: #f0f2f5; width: 32.9vw">
         <div class="card-body">
           <div v-for="review in reviews" :key="review.id">
-            <CommentCard :username="review.user.username" :comment="review.comment" :rating="review.rating"></CommentCard>
+            <CommentCard
+                :username="review.user.username"
+                :comment="review.comment"
+                :rating="review.rating">
+            </CommentCard>
           </div>
         </div>
       </div>

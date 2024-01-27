@@ -18,7 +18,12 @@
           </div>
           <div class="scrollbar">
             <div v-for="review in userInfo.reviews" :key="review.id">
-              <ProfileComment :username="userInfo.username" :comment="review.comment" :rating="review.rating" :id="review.id"></ProfileComment>
+              <ProfileComment
+                  :username="userInfo.username"
+                  :comment="review.comment"
+                  :rating="review.rating"
+                  :id="review.id">
+              </ProfileComment>
             </div>
           </div>
         </div>
@@ -55,6 +60,7 @@ export default {
         headers: {"Content-Type": "application/json", "Authorization": "Bearer " + sessionStorage.getItem("access")},
       };
       const response = await fetch(store.api_url + "/profiles/profile/", requestOptions);
+
       this.userInfo = await response.json();
       this.userInfo = this.userInfo["user"];
       this.userReviews = this.userInfo.reviews
