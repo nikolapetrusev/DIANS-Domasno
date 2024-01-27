@@ -9,3 +9,5 @@ python-dotenv
 django-cors-headers
 # za testiranje
 factory-boy
+# injektor
+injector
