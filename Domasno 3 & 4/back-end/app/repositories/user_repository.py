@@ -13,8 +13,14 @@ class UserRepository:
     def add_favorite(self, user: User, winery: Winery) -> None:
         user.extended.favorites.add(winery)
 
+    def delete_favorite(self, user: User, winery: Winery) -> None:
+        user.extended.favorites.remove(winery)
+
     def get_visited(self, user: User) -> list[Winery]:
         return vis if (vis := user.extended.visited) else []
 
     def add_visited(self, user: User, winery: Winery) -> None:
         user.extended.visited.add(winery)
+
+    def delete_visited(self, user: User, winery: Winery) -> None:
+        user.extended.visited.remove(winery)

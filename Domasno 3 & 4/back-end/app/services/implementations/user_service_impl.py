@@ -48,6 +48,11 @@ class UserServiceImpl(UserService, metaclass=SingletonMeta):
         winery = self.winery_repository.get_winery_by_id(data["winery_id"])
         self.user_repository.add_favorite(user, winery)
 
+    def delete_favorite(self, username: str, data: dict[str, Any]) -> None:
+        user = self.user_repository.get_user(username)
+        winery = self.winery_repository.get_winery_by_id(data["winery_id"])
+        self.user_repository.delete_favorite(user, winery)
+
     def get_visited(self, username: str) -> dict[str, Any]:
         user = self.user_repository.get_user(username)
         visited = self.user_repository.get_visited(user)
@@ -58,3 +63,8 @@ class UserServiceImpl(UserService, metaclass=SingletonMeta):
         user = self.user_repository.get_user(username)
         winery = self.winery_repository.get_winery_by_id(data["winery_id"])
         self.user_repository.add_visited(user, winery)
+
+    def delete_visited(self, username: str, data: dict[str, Any]) -> None:
+        user = self.user_repository.get_user(username)
+        winery = self.winery_repository.get_winery_by_id(data["winery_id"])
+        self.user_repository.delete_visited(user, winery)

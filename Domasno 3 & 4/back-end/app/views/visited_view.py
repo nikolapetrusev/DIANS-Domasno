@@ -42,3 +42,16 @@ class VisitedView(APIView):
         self.user_service.add_visited(request.user, data)
 
         return Response(status=status.HTTP_202_ACCEPTED)
+
+
+    def delete(self, request, format=None) -> Response:
+        """
+        Delete winery from favorites
+        Parameters:
+            winery_id: int
+        """
+        data = json.loads(request.body.decode("utf-8"))
+        self.user_service.delete_visited(request.user, data)
+
+        return Response(status=status.HTTP_200_OK)
+

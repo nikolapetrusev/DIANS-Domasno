@@ -42,3 +42,15 @@ class FavoritesView(APIView):
         self.user_service.add_favorite(request.user, data)
 
         return Response(status=status.HTTP_202_ACCEPTED)
+
+    def delete(self, request, format=None) -> Response:
+        """
+        Delete winery from favorites
+        Parameters:
+            winery_id: int
+        """
+        data = json.loads(request.body.decode("utf-8"))
+        self.user_service.delete_favorite(request.user, data)
+
+        return Response(status=status.HTTP_200_OK)
+
