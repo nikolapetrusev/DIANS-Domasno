@@ -107,7 +107,7 @@ export default {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     margin-left: 3rem;
     width: 31rem;
-    height: 33rem;
+    height: 33.8rem;
   }
 
   .scrollbar {

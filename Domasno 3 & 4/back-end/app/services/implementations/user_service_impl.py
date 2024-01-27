@@ -33,7 +33,8 @@ class UserServiceImpl(UserService, metaclass=SingletonMeta):
             if user.check_password(old_pw):
                 new_pw = data.get("new_password", None)
                 user.set_password(new_pw)
-            raise PasswordsDontMatchError()
+            else:
+                raise PasswordsDontMatchError()
 
         user.save()
 

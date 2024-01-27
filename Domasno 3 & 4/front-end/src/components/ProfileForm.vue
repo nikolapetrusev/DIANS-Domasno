@@ -1,5 +1,5 @@
 <template>
-  <div class="p-3 py-5">
+  <div class="p-3 ">
     <form @submit="saveInformation">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="text-right">Подесување на профилот</h4>
@@ -24,6 +24,12 @@
         <div class="col-md-12">
           <label class="labels">Корисничко име</label>
           <input type="text" class="form-control" placeholder="Корисничко име" value="" v-model="userInfo.username">
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <label class="labels">Стара лозинка</label>
+          <input type="text" class="form-control" value="" placeholder="Нова лозинка" v-model="oldPassword">
         </div>
       </div>
       <div class="row mt-3">
@@ -60,6 +66,7 @@ export default {
       const response = await fetch(store.api_url + "/profiles/profile/", requestOptions);
       this.userInfo = await response.json();
       this.userInfo = this.userInfo["user"];
+
     },
     async saveInformation() {
       const requestOptions = {
@@ -74,6 +81,11 @@ export default {
           "new_password": this.newPassword,
         })
       };
+
+      console.log("old pass")
+      console.log(this.oldPassword)
+      console.log("new pass")
+      console.log(this.newPassword)
 
       await fetch(store.api_url + "/profiles/profile/", requestOptions);
       router.go(0)
