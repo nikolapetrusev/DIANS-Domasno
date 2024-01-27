@@ -92,8 +92,6 @@ export default {
         });
       }
 
-      console.log(filtered)
-
       return filtered
     },
   },

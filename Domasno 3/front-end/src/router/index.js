@@ -23,14 +23,12 @@ const routes = [
       mutations.setSelectedRating(0)
       mutations.setFavoriteClicked(false)
       mutations.setVisitedClicked(false)
-      console.log(store.visitedClicked)
 
       if(sessionStorage.getItem("access")!==null) {
         sessionStorage.setItem("loggedIn", "true")
       } else {
         if(store.loggedIn===true) {
           sessionStorage.setItem("loggedIn", "true")
-          console.log(sessionStorage.getItem("access"))
         }
         sessionStorage.setItem("loggedIn", "false")
       }
@@ -59,7 +57,6 @@ const routes = [
       } else {
         if(store.loggedIn===true) {
           sessionStorage.setItem("loggedIn", "true")
-          console.log(sessionStorage.getItem("access"))
         }
         sessionStorage.setItem("loggedIn", "false")
       }
@@ -99,7 +96,6 @@ const routes = [
       } else {
         if(store.loggedIn===true) {
           sessionStorage.setItem("loggedIn", "true")
-          console.log(sessionStorage.getItem("access"))
         }
         sessionStorage.setItem("loggedIn", "false")
       }

@@ -75,30 +75,29 @@ export default {
           "email": this.email, "first_name": this.firstname, "last_name": this.lastname})
       };
       const response = await fetch(store.api_url + "/auth/register/", requestOptions);
-      console.log(response.status)
-      console.log(this.username)
-      console.log(this.email)
-      console.log(this.password)
-      console.log(this.repeatPassword)
-      console.log(this.email)
-      console.log(this.firstname)
-      console.log(this.lastname)
       if (response.status === 201) {
         const data = await response.json();
-        sessionStorage.setItem("access", data.access);
-        sessionStorage.setItem("refresh", data.refresh);
+        this.handleSuccessfulRegister(data);
+        await router.push("/login");
 
-        await router.push("/login")
       } else {
-        this.showErrorMessage = true
-        this.errorMessage = this.username === undefined || this.password === undefined || this.repeatPassword === undefined
-          || this.email === undefined || this.firstname === undefined || this.lastname === undefined
-            ? "Please fill out all fields"
-            : "Invalid user credentials";
-        setTimeout(() => {
-          this.showErrorMessage = false;
-        }, 3000);
+        this.handleFailedRegister();
       }
+    },
+    handleSuccessfulRegister(data) {
+      sessionStorage.setItem("access", data.access);
+      sessionStorage.setItem("refresh", data.refresh);
+    },
+    handleFailedRegister() {
+      this.showErrorMessage = true
+      this.errorMessage = this.username === undefined || this.password === undefined || this.repeatPassword === undefined
+      || this.email === undefined || this.firstname === undefined || this.lastname === undefined
+          ? "Please fill out all fields"
+          : "Invalid user credentials";
+
+      setTimeout(() => {
+        this.showErrorMessage = false;
+      }, 3000);
     }
   }
 }

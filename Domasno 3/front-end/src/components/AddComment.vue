@@ -75,7 +75,7 @@ export default {
         body: JSON.stringify({
           "rating": selectedRating,
           "winery_id": this.selectedWinery.id,
-          "comment": this.comment === undefined ? "" : this.comment
+          "comment": this.comment ?? ""
         })
       };
 
